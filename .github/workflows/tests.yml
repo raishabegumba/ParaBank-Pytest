@@ -1,0 +1,57 @@
+name: PyTest Framework CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    - name: Run PyTest - Smoke Tests
+      run: |
+        pytest -m smoke -v --html=reports/smoke_report.html --self-contained-html
+
+    - name: Run PyTest - All Tests
+      run: |
+        pytest -v --html=reports/report.html --self-contained-html --cov=src --cov-report=html
+
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: pytest-reports
+        path: reports/
+
+    - name: Upload coverage
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov/
+
+    - name: Upload logs
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-logs
+        path: logs/

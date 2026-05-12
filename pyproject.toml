@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parabank-pytest"
+version = "1.0.0"
+description = "Industry-standard PyTest Framework for ParaBank Application Testing"
+authors = [{name = "QA Team", email = "qa@parabank.com"}]
+license = {text = "MIT"}
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-xdist>=3.0.0",
+    "pytest-html>=3.1.0",
+    "pytest-cov>=4.0.0",
+    "pytest-timeout>=2.1.0",
+    "pytest-retry>=1.2.0",
+    "playwright>=1.40.0",
+    "pytest-playwright>=0.4.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+    "faker>=18.0.0",
+    "allure-pytest>=2.13.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

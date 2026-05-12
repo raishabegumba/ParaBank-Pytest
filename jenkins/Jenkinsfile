@@ -1,0 +1,606 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(
+            name: 'TEST_TYPE',
+            choices: ['all', 'smoke', 'regression', 'security', 'performance'],
+            description: 'Type of tests to run'
+        )
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'staging', 'prod'],
+            description: 'Target environment'
+        )
+        booleanParam(
+            name: 'CLEAN_WORKSPACE',
+            defaultValue: true,
+            description: 'Clean workspace before build'
+        )
+        booleanParam(
+            name: 'GENERATE_REPORTS',
+            defaultValue: true,
+            description: 'Generate test reports'
+        )
+    }
+    
+    environment {
+        PYTHON_VERSION = '3.9'
+        NODE_VERSION = '18'
+        DOCKER_REGISTRY = 'your-registry.com'
+        APP_NAME = 'parabank'
+        TEST_REPORTS_DIR = "${WORKSPACE}/reports"
+        ALLURE_RESULTS_DIR = "${WORKSPACE}/allure-results"
+        DOCKER_COMPOSE_FILE = "${WORKSPACE}/docker/docker-compose.test.yml"
+    }
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timeout(time: 120, unit: 'MINUTES')
+        timestamps()
+        ansiColor('xterm')
+    }
+    
+    triggers {
+        // Nightly regression tests
+        cron('H 2 * * *')
+        
+        // Poll SCM for changes
+        pollSCM('H/5 * * * *')
+    }
+    
+    stages {
+        stage('Preparation') {
+            steps {
+                script {
+                    if (params.CLEAN_WORKSPACE) {
+                        cleanWs()
+                    }
+                    
+                    echo "Starting ParaBank Test Framework Pipeline"
+                    echo "Test Type: ${params.TEST_TYPE}"
+                    echo "Environment: ${params.ENVIRONMENT}"
+                    echo "Branch: ${env.BRANCH_NAME}"
+                    echo "Build Number: ${env.BUILD_NUMBER}"
+                }
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                checkout scm
+                
+                script {
+                    // Create necessary directories
+                    sh '''
+                        mkdir -p ${TEST_REPORTS_DIR}
+                        mkdir -p ${ALLURE_RESULTS_DIR}
+                        mkdir -p ${TEST_REPORTS_DIR}/screenshots
+                        mkdir -p ${TEST_REPORTS_DIR}/videos
+                        mkdir -p ${TEST_REPORTS_DIR}/logs
+                    '''
+                }
+            }
+        }
+        
+        stage('Setup Environment') {
+            parallel {
+                stage('Python Setup') {
+                    steps {
+                        script {
+                            sh """
+                                echo 'Setting up Python ${PYTHON_VERSION}'
+                                python${PYTHON_VERSION} --version
+                                python${PYTHON_VERSION} -m pip install --upgrade pip
+                                pip install -r requirements.txt
+                                pip install pytest pytest-playwright pytest-xdist pytest-allure-adaptor
+                            """
+                        }
+                    }
+                }
+                
+                stage('Node.js Setup') {
+                    steps {
+                        script {
+                            sh """
+                                echo 'Setting up Node.js ${NODE_VERSION}'
+                                node --version
+                                npm --version
+                            """
+                        }
+                    }
+                }
+                
+                stage('Playwright Setup') {
+                    steps {
+                        script {
+                            sh """
+                                echo 'Installing Playwright browsers'
+                                python${PYTHON_VERSION} -m playwright install chromium firefox webkit
+                                python${PYTHON_VERSION} -m playwright install-deps
+                            """
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Code Quality') {
+            when {
+                anyOf {
+                    expression { return params.TEST_TYPE == 'all' }
+                    expression { return env.BRANCH_NAME == 'main' }
+                    expression { return env.BRANCH_NAME == 'develop' }
+                }
+            }
+            parallel {
+                stage('Linting') {
+                    steps {
+                        script {
+                            sh """
+                                echo 'Running code quality checks...'
+                                
+                                # Black formatting check
+                                black --check --diff src/ tests/ || true
+                                
+                                # isort import check
+                                isort --check-only --diff src/ tests/ || true
+                                
+                                # flake8 linting
+                                flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503 || true
+                                
+                                # mypy type checking
+                                mypy src/ --ignore-missing-imports || true
+                            """
+                        }
+                    }
+                }
+                
+                stage('Security Scan') {
+                    steps {
+                        script {
+                            sh """
+                                echo 'Running security scans...'
+                                
+                                # Bandit security scan
+                                bandit -r src/ -f json -o ${TEST_REPORTS_DIR}/bandit-report.json || true
+                                
+                                # Safety dependency check
+                                safety check --json --output ${TEST_REPORTS_DIR}/safety-report.json || true
+                            """
+                        }
+                        
+                        archiveArtifacts artifacts: 'reports/bandit-report.json,reports/safety-report.json', allowEmptyArchive: true
+                    }
+                }
+            }
+        }
+        
+        stage('Start Application') {
+            steps {
+                script {
+                    echo "Starting ParaBank application for testing..."
+                    
+                    sh """
+                        echo 'Starting Docker containers...'
+                        docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+                        
+                        echo 'Waiting for application to be ready...'
+                        sleep 30
+                        
+                        echo 'Checking application health...'
+                        curl -f http://localhost:8080/parabank/index.htm || exit 1
+                    """
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            matrix {
+                axes {
+                    axis {
+                        name 'BROWSER'
+                        values 'chromium', 'firefox', 'webkit'
+                    }
+                }
+                
+                when {
+                    anyOf {
+                        expression { return params.TEST_TYPE == 'all' }
+                        expression { return params.TEST_TYPE == 'smoke' }
+                    }
+                }
+                
+                stages {
+                    stage('Smoke Tests') {
+                        steps {
+                            script {
+                                sh """
+                                    echo "Running smoke tests on ${BROWSER}..."
+                                    
+                                    pytest tests/ui/ \\
+                                        -m smoke \\
+                                        --browser ${BROWSER} \\
+                                        --headed=false \\
+                                        --timeout=30000 \\
+                                        --junit-xml=${TEST_REPORTS_DIR}/smoke-test-results-${BROWSER}.xml \\
+                                        --alluredir=${ALLURE_RESULTS_DIR}/smoke-${BROWSER} \\
+                                        --html=${TEST_REPORTS_DIR}/smoke-report-${BROWSER}.html \\
+                                        --self-contained-html \\
+                                        -v
+                                """
+                            }
+                        }
+                        
+                        post {
+                            always {
+                                publishTestResults testResultsPattern: "reports/smoke-test-results-${BROWSER}.xml"
+                                
+                                if (params.GENERATE_REPORTS) {
+                                    publishHTML([
+                                        allowMissing: false,
+                                        alwaysLinkToLastBuild: true,
+                                        keepAll: true,
+                                        reportDir: "reports",
+                                        reportFiles: "smoke-report-${BROWSER}.html",
+                                        reportName: "Smoke Test Report - ${BROWSER}",
+                                        reportTitles: "Smoke Test Results for ${BROWSER}"
+                                    ])
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Regression Tests
+            stage('Regression Tests') {
+                when {
+                    anyOf {
+                        expression { return params.TEST_TYPE == 'all' }
+                        expression { return params.TEST_TYPE == 'regression' }
+                    }
+                }
+                
+                steps {
+                    script {
+                        sh """
+                            echo "Running regression tests..."
+                            
+                            pytest tests/ui/ \\
+                                -m regression \\
+                                --browser chromium \\
+                                --headed=false \\
+                                --timeout=60000 \\
+                                --junit-xml=${TEST_REPORTS_DIR}/regression-test-results.xml \\
+                                --alluredir=${ALLURE_RESULTS_DIR}/regression \\
+                                --html=${TEST_REPORTS_DIR}/regression-report.html \\
+                                --self-contained-html \\
+                                --parallel-workers=2 \\
+                                -v
+                        """
+                    }
+                }
+                
+                post {
+                    always {
+                        publishTestResults testResultsPattern: "reports/regression-test-results.xml"
+                        
+                        if (params.GENERATE_REPORTS) {
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "reports",
+                                reportFiles: "regression-report.html",
+                                reportName: "Regression Test Report",
+                                reportTitles: "Regression Test Results"
+                            ])
+                        }
+                    }
+                }
+            }
+            
+            // Security Tests
+            stage('Security Tests') {
+                when {
+                    anyOf {
+                        expression { return params.TEST_TYPE == 'all' }
+                        expression { return params.TEST_TYPE == 'security' }
+                    }
+                }
+                
+                steps {
+                    script {
+                        sh """
+                            echo "Running security tests..."
+                            
+                            pytest tests/ui/ \\
+                                -m security \\
+                                --browser chromium \\
+                                --headed=false \\
+                                --timeout=60000 \\
+                                --junit-xml=${TEST_REPORTS_DIR}/security-test-results.xml \\
+                                --alluredir=${ALLURE_RESULTS_DIR}/security \\
+                                --html=${TEST_REPORTS_DIR}/security-report.html \\
+                                --self-contained-html \\
+                                -v
+                        """
+                    }
+                }
+                
+                post {
+                    always {
+                        publishTestResults testResultsPattern: "reports/security-test-results.xml"
+                        
+                        if (params.GENERATE_REPORTS) {
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "reports",
+                                reportFiles: "security-report.html",
+                                reportName: "Security Test Report",
+                                reportTitles: "Security Test Results"
+                            ])
+                        }
+                    }
+                }
+            }
+            
+            // Performance Tests
+            stage('Performance Tests') {
+                when {
+                    anyOf {
+                        expression { return params.TEST_TYPE == 'all' }
+                        expression { return params.TEST_TYPE == 'performance' }
+                    }
+                }
+                
+                steps {
+                    script {
+                        sh """
+                            echo "Running performance tests..."
+                            
+                            pytest tests/ui/ \\
+                                -m performance \\
+                                --browser chromium \\
+                                --headed=false \\
+                                --timeout=60000 \\
+                                --junit-xml=${TEST_REPORTS_DIR}/performance-test-results.xml \\
+                                --benchmark-only \\
+                                --benchmark-json=${TEST_REPORTS_DIR}/benchmark-results.json \\
+                                -v
+                        """
+                    }
+                }
+                
+                post {
+                    always {
+                        publishTestResults testResultsPattern: "reports/performance-test-results.xml"
+                        archiveArtifacts artifacts: 'reports/benchmark-results.json', allowEmptyArchive: true
+                    }
+                }
+            }
+        }
+        
+        stage('Generate Reports') {
+            when {
+                expression { return params.GENERATE_REPORTS }
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Generating comprehensive reports..."
+                        
+                        # Generate Allure report
+                        allure generate ${ALLURE_RESULTS_DIR} --clean -o ${TEST_REPORTS_DIR}/allure-report
+                        
+                        # Generate HTML dashboard
+                        python${PYTHON_VERSION} -c "
+import sys
+sys.path.append('src')
+from reporting.html_reporter import get_html_reporter
+
+reporter = get_html_reporter()
+reports = reporter.generate_all_reports()
+print('Generated reports:', reports)
+"
+                        
+                        # Create test summary
+                        python${PYTHON_VERSION} -c "
+import json
+import glob
+import xml.etree.ElementTree as ET
+
+total_tests = 0
+total_failures = 0
+total_errors = 0
+total_skipped = 0
+
+# Parse all XML test results
+for xml_file in glob.glob('${TEST_REPORTS_DIR}/*-test-results.xml'):
+    try:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+        
+        total_tests += int(root.attrib.get('tests', 0))
+        total_failures += int(root.attrib.get('failures', 0))
+        total_errors += int(root.attrib.get('errors', 0))
+        total_skipped += int(root.attrib.get('skipped', 0))
+    except:
+        pass
+
+passed = total_tests - total_failures - total_errors - total_skipped
+pass_rate = (passed / total_tests * 100) if total_tests > 0 else 0
+
+summary = {
+    'build_number': '${env.BUILD_NUMBER}',
+    'branch': '${env.BRANCH_NAME}',
+    'test_type': '${params.TEST_TYPE}',
+    'environment': '${params.ENVIRONMENT}',
+    'total_tests': total_tests,
+    'passed': passed,
+    'failures': total_failures,
+    'errors': total_errors,
+    'skipped': total_skipped,
+    'pass_rate': round(pass_rate, 2),
+    'timestamp': '$(date -u +"%Y-%m-%dT%H:%M:%SZ")'
+}
+
+with open('${TEST_REPORTS_DIR}/test-summary.json', 'w') as f:
+    json.dump(summary, f, indent=2)
+
+print('Test Summary:')
+print(f'Total Tests: {total_tests}')
+print(f'Passed: {passed}')
+print(f'Failures: {total_failures}')
+print(f'Pass Rate: {pass_rate:.2f}%')
+"
+                    """
+                }
+                
+                post {
+                    always {
+                        // Archive all reports
+                        archiveArtifacts artifacts: 'reports/**/*', allowEmptyArchive: true
+                        
+                        // Publish Allure report
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: 'reports/allure-report',
+                            reportFiles: 'index.html',
+                            reportName: 'Allure Test Report',
+                            reportTitles: 'Comprehensive Test Report Dashboard'
+                        ])
+                        
+                        // Publish HTML dashboard
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: 'reports',
+                            reportFiles: 'dashboard.html',
+                            reportName: 'Test Dashboard',
+                            reportTitles: 'Test Execution Dashboard'
+                        ])
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                anyOf {
+                    expression { return env.BRANCH_NAME == 'main' }
+                    expression { return env.BRANCH_NAME == 'develop' }
+                }
+            }
+            
+            parallel {
+                stage('Deploy to Staging') {
+                    when {
+                        expression { return env.BRANCH_NAME == 'develop' }
+                    }
+                    steps {
+                        script {
+                            echo "Deploying to staging environment..."
+                            
+                            // Add deployment commands here
+                            sh """
+                                echo "Deploying to staging..."
+                                # Example: docker build and push
+                                # docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:staging .
+                                # docker push ${DOCKER_REGISTRY}/${APP_NAME}:staging
+                            """
+                        }
+                    }
+                }
+                
+                stage('Deploy to Production') {
+                    when {
+                        expression { return env.BRANCH_NAME == 'main' }
+                    }
+                    steps {
+                        script {
+                            echo "Deploying to production environment..."
+                            
+                            // Add deployment commands here
+                            input message: 'Deploy to production?', ok: 'Deploy'
+                            
+                            sh """
+                                echo "Deploying to production..."
+                                # Example: docker build and push
+                                # docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:latest .
+                                # docker push ${DOCKER_REGISTRY}/${APP_NAME}:latest
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                echo "Cleaning up..."
+                
+                // Stop Docker containers
+                sh """
+                    docker-compose -f ${DOCKER_COMPOSE_FILE} down || true
+                    docker system prune -f || true
+                """
+                
+                // Archive test artifacts
+                archiveArtifacts artifacts: [
+                    'reports/screenshots/**/*',
+                    'reports/videos/**/*',
+                    'reports/logs/**/*',
+                    'reports/*.json'
+                ], allowEmptyArchive: true
+                
+                // Clean workspace to save space
+                cleanWs()
+            }
+        }
+        
+        success {
+            script {
+                echo "Pipeline completed successfully!"
+                
+                // Send success notification
+                sh """
+                    echo "Sending success notification..."
+                    # Add notification logic here (Slack, Email, etc.)
+                """
+            }
+        }
+        
+        failure {
+            script {
+                echo "Pipeline failed!"
+                
+                // Send failure notification
+                sh """
+                    echo "Sending failure notification..."
+                    # Add notification logic here (Slack, Email, etc.)
+                """
+            }
+        }
+        
+        unstable {
+            script {
+                echo "Pipeline is unstable!"
+                
+                // Send unstable notification
+                sh """
+                    echo "Sending unstable notification..."
+                    # Add notification logic here (Slack, Email, etc.)
+                """
+            }
+        }
+    }
+}

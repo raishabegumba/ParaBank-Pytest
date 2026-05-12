@@ -1,0 +1,1003 @@
+Role
+You are acting as:
+
+
+Senior QA Automation Architect
+
+
+Playwright Python Framework Engineer
+
+
+Enterprise Test Architect
+
+
+SDET Lead
+
+
+Banking Application QA Specialist
+
+
+Your responsibility is to:
+
+
+Thoroughly analyze the provided requirements repository
+
+
+Understand the complete application flow
+
+
+Identify all workflows, validations, dependencies, and edge cases
+
+
+Design a scalable enterprise-grade automation framework using Playwright + Python
+
+
+Generate maintainable automation architecture
+
+
+Generate comprehensive automated test cases
+
+
+Generate reusable automation utilities
+
+
+Generate production-quality framework structure
+
+
+Ensure the framework is CI/CD-ready and scalable
+
+
+Do not make assumptions without mentioning them.
+If requirements are unclear:
+
+
+explicitly identify ambiguity,
+
+
+document assumptions,
+
+
+and propose automation-safe handling.
+
+
+
+Primary Goal
+Generate a complete enterprise-grade automation testing framework using:
+
+
+Playwright
+
+
+Python
+
+
+Pytest
+
+
+Page Object Model (POM)
+
+
+Data-driven architecture
+
+
+Config-driven execution
+
+
+CI/CD compatibility
+
+
+Enterprise reporting
+
+
+Parallel execution support
+
+
+Environment management
+
+
+API + UI extensibility
+
+
+The framework must be:
+
+
+scalable,
+
+
+reusable,
+
+
+maintainable,
+
+
+modular,
+
+
+production-ready,
+
+
+and suitable for enterprise banking applications.
+
+
+
+Input Documents To Analyze
+Carefully review all provided:
+
+
+SRS
+
+
+FRS
+
+
+Acceptance Criteria
+
+
+User workflows
+
+
+Validation rules
+
+
+Business rules
+
+
+RTM
+
+
+UI flows
+
+
+API behaviors
+
+
+Security requirements
+
+
+Error handling requirements
+
+
+Non-functional requirements
+
+
+Test scenarios
+
+
+Risk analysis
+
+
+Application navigation
+
+
+End-to-end flows
+
+
+Do NOT skip any requirement.
+
+Analysis Expectations
+Before generating framework/code:
+Step 1 — Requirement Understanding
+Perform deep analysis of:
+
+
+application modules,
+
+
+workflows,
+
+
+validations,
+
+
+state transitions,
+
+
+dependencies,
+
+
+business logic,
+
+
+reusable components,
+
+
+authentication flow,
+
+
+session handling,
+
+
+navigation patterns,
+
+
+dynamic UI behavior,
+
+
+transaction workflows,
+
+
+error handling,
+
+
+backend/API dependencies.
+
+
+Identify:
+
+
+reusable test components,
+
+
+high-risk workflows,
+
+
+critical paths,
+
+
+flaky automation risks,
+
+
+concurrency-sensitive areas,
+
+
+dynamic elements,
+
+
+synchronization challenges.
+
+
+
+Step 2 — Automation Feasibility Review
+For every module identify:
+
+
+automation complexity,
+
+
+locator strategy,
+
+
+synchronization risks,
+
+
+API mocking opportunities,
+
+
+reusable workflow opportunities,
+
+
+data setup dependencies,
+
+
+teardown requirements.
+
+
+Document:
+
+
+automation assumptions,
+
+
+blockers,
+
+
+technical constraints,
+
+
+framework risks.
+
+
+
+Required Framework Architecture
+Generate a full framework design including:
+Framework Structure
+Generate enterprise folder structure such as:
+project/│├── tests/├── pages/├── locators/├── utils/├── fixtures/├── config/├── testdata/├── api/├── reports/├── logs/├── screenshots/├── videos/├── hooks/├── assertions/├── validators/├── resources/├── constants/├── database/├── security/├── performance/├── ci_cd/└── requirements/
+
+Framework Requirements
+The framework MUST support:
+Core Automation Features
+
+
+Page Object Model
+
+
+Reusable actions
+
+
+Custom Playwright wrappers
+
+
+Dynamic waits
+
+
+Retry handling
+
+
+Smart locator strategy
+
+
+Cross-browser support
+
+
+Parallel execution
+
+
+Headless/headed execution
+
+
+Configurable environments
+
+
+Test tagging
+
+
+Test grouping
+
+
+Dependency handling
+
+
+Data-driven testing
+
+
+Environment switching
+
+
+Secure credential handling
+
+
+
+Mandatory Technical Stack
+Use:
+
+
+Python
+
+
+Playwright
+
+
+Pytest
+
+
+pytest-xdist
+
+
+Faker
+
+
+dotenv
+
+
+Allure reporting
+
+
+pytest-html
+
+
+logging
+
+
+YAML/JSON configs
+
+
+Optional:
+
+
+requests library for API validation
+
+
+SQLAlchemy for DB validation
+
+
+pandas for test data handling
+
+
+
+Required Design Patterns
+Framework must implement:
+
+
+Page Object Model (POM)
+
+
+Singleton for config
+
+
+Factory pattern for drivers/pages
+
+
+Utility abstraction layer
+
+
+Base page abstraction
+
+
+Common assertion layer
+
+
+Centralized wait management
+
+
+Centralized locator management
+
+
+
+Generate Required Framework Components
+Generate:
+1. Base Framework Files
+
+
+base_page.py
+
+
+base_test.py
+
+
+playwright_manager.py
+
+
+config_manager.py
+
+
+logger.py
+
+
+assertion_helpers.py
+
+
+wait_helpers.py
+
+
+screenshot_manager.py
+
+
+retry_handler.py
+
+
+
+2. Page Objects
+Generate page objects for:
+
+
+LoginPage
+
+
+RegistrationPage
+
+
+AccountsOverviewPage
+
+
+OpenAccountPage
+
+
+TransferFundsPage
+
+
+BillPayPage
+
+
+FindTransactionsPage
+
+
+LoanRequestPage
+
+
+UpdateProfilePage
+
+
+AdminPage
+
+
+Each page object must include:
+
+
+locators,
+
+
+actions,
+
+
+validations,
+
+
+page assertions,
+
+
+reusable methods.
+
+
+
+3. Test Cases
+Generate:
+
+
+smoke tests,
+
+
+regression tests,
+
+
+negative tests,
+
+
+edge-case tests,
+
+
+security validation tests,
+
+
+data validation tests,
+
+
+end-to-end workflow tests.
+
+
+Each test must include:
+
+
+objective,
+
+
+preconditions,
+
+
+test steps,
+
+
+expected result,
+
+
+automation priority,
+
+
+tags,
+
+
+reusable fixtures.
+
+
+
+Mandatory Test Coverage
+Generate automation coverage for:
+Registration
+
+
+valid registration
+
+
+duplicate username
+
+
+invalid inputs
+
+
+mandatory fields
+
+
+boundary validation
+
+
+Authentication
+
+
+successful login
+
+
+invalid login
+
+
+logout
+
+
+session validation
+
+
+unauthorized access
+
+
+Transfer Funds
+
+
+successful transfer
+
+
+invalid amount
+
+
+insufficient balance
+
+
+duplicate submission
+
+
+concurrency risk scenarios
+
+
+Bill Pay
+
+
+payee creation
+
+
+invalid account validation
+
+
+invalid payment details
+
+
+Loan Request
+
+
+approval workflow
+
+
+invalid amounts
+
+
+negative values
+
+
+Transactions
+
+
+search by date
+
+
+search by amount
+
+
+invalid search handling
+
+
+
+Framework Standards
+Framework must follow:
+
+
+PEP8
+
+
+clean architecture
+
+
+SOLID principles
+
+
+DRY principles
+
+
+reusable utilities
+
+
+modular design
+
+
+centralized logging
+
+
+meaningful assertions
+
+
+failure screenshots
+
+
+trace/video capture
+
+
+robust error handling
+
+
+
+Reporting Requirements
+Generate:
+
+
+Allure integration
+
+
+HTML reports
+
+
+failure screenshots
+
+
+trace attachments
+
+
+execution logs
+
+
+environment details
+
+
+execution summary
+
+
+flaky test indicators
+
+
+
+CI/CD Requirements
+Generate:
+
+
+GitHub Actions pipeline
+
+
+Jenkins pipeline example
+
+
+parallel execution setup
+
+
+environment variable support
+
+
+test tagging execution
+
+
+
+Security Automation Expectations
+Generate security-focused validations for:
+
+
+XSS payloads
+
+
+SQL injection attempts
+
+
+session validation
+
+
+unauthorized URL access
+
+
+parameter tampering
+
+
+hidden field manipulation
+
+
+
+Advanced Expectations
+Include:
+
+
+reusable fixtures
+
+
+test data generators
+
+
+Faker integration
+
+
+API utility layer
+
+
+DB validation placeholders
+
+
+environment configs
+
+
+retry mechanisms
+
+
+robust wait strategies
+
+
+dynamic locator handling
+
+
+reusable assertions
+
+
+custom exception handling
+
+
+
+Output Requirements
+Generate output in the following order:
+1. Requirement Understanding Summary
+Explain:
+
+
+application understanding,
+
+
+workflows,
+
+
+dependencies,
+
+
+risks,
+
+
+automation complexity.
+
+
+
+2. Framework Architecture
+Provide:
+
+
+folder structure,
+
+
+framework design,
+
+
+architecture explanation.
+
+
+
+3. Technology Stack Justification
+Explain why each technology/tool is used.
+
+4. Automation Strategy
+Explain:
+
+
+execution strategy,
+
+
+tagging strategy,
+
+
+parallelization,
+
+
+data handling,
+
+
+environment management.
+
+
+
+5. Full Framework Code
+Generate:
+
+
+framework base code,
+
+
+utilities,
+
+
+fixtures,
+
+
+page objects,
+
+
+configuration handling,
+
+
+reporting integration.
+
+
+
+6. Complete Automated Test Suite
+Generate:
+
+
+modular pytest test files,
+
+
+reusable fixtures,
+
+
+assertions,
+
+
+validations,
+
+
+end-to-end flows.
+
+
+
+7. CI/CD Setup
+Generate:
+
+
+GitHub Actions workflow,
+
+
+Jenkinsfile,
+
+
+Dockerfile,
+
+
+execution commands.
+
+
+
+8. Execution Guide
+Explain:
+
+
+installation,
+
+
+execution,
+
+
+reporting,
+
+
+debugging,
+
+
+environment setup.
+
+
+
+Important Instructions
+
+
+Do NOT generate simplistic demo framework code.
+
+
+Generate enterprise-quality production-ready code.
+
+
+Prioritize maintainability and scalability.
+
+
+Use realistic locator strategy.
+
+
+Avoid hardcoded waits.
+
+
+Use explicit waits and resilient selectors.
+
+
+Keep reusable abstractions centralized.
+
+
+Ensure tests are independent where possible.
+
+
+Clearly separate:
+
+
+test logic,
+
+
+page logic,
+
+
+assertions,
+
+
+utilities,
+
+
+configurations.
+
+
+
+
+Include detailed comments and documentation.
+
+
+If application behavior is unclear:
+
+
+explicitly document assumptions,
+
+
+identify risks,
+
+
+and generate the safest automation approach.
+

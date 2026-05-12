@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  # ParaBank Application
+  parabank-app:
+    image: parasoft/parabank:latest
+    container_name: parabank-test
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+      - SPRING_PROFILES_ACTIVE=test
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/parabank/index.htm"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./docker/parabank-config:/config
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  # MySQL Database for ParaBank
+  mysql:
+    image: mysql:8.0
+    container_name: parabank-mysql-test
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=testpassword
+      - MYSQL_DATABASE=parabank
+      - MYSQL_USER=parabank
+      - MYSQL_PASSWORD=parabank
+    volumes:
+      - mysql-test-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching (if needed)
+  redis:
+    image: redis:7-alpine
+    container_name: parabank-redis-test
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-test-data:/data
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: parabank-nginx-test
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - parabank-app
+    networks:
+      - test-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Test Data Generator (optional)
+  test-data-generator:
+    build:
+      context: ./docker/test-data-generator
+      dockerfile: Dockerfile
+    container_name: test-data-generator
+    environment:
+      - TARGET_URL=http://parabank-app:8080
+      - DATA_SIZE=medium
+    depends_on:
+      parabank-app:
+        condition: service_healthy
+    networks:
+      - test-network
+    profiles:
+      - data-generation
+
+  # Performance Monitor (optional)
+  performance-monitor:
+    build:
+      context: ./docker/performance-monitor
+      dockerfile: Dockerfile
+    container_name: performance-monitor
+    ports:
+      - "9090:9090"
+    environment:
+      - TARGET_URL=http://parabank-app:8080
+      - METRICS_PORT=9090
+    depends_on:
+      parabank-app:
+        condition: service_healthy
+    networks:
+      - test-network
+    profiles:
+      - monitoring
+
+volumes:
+  mysql-test-data:
+    driver: local
+  redis-test-data:
+    driver: local
+
+networks:
+  test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

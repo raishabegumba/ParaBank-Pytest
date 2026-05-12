@@ -1,0 +1,16 @@
+-r requirements.txt
+
+# Code Quality
+black==23.9.1
+isort==5.12.0
+flake8==6.1.0
+pylint==2.18.1
+mypy==1.5.1
+
+# Testing Enhancements
+pytest-mock==3.11.1
+pytest-benchmark==4.0.0
+
+# Development Tools
+ipython==8.14.0
+ipdb==0.13.13

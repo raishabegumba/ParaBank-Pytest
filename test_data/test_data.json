@@ -1,0 +1,28 @@
+{
+  "smoke_test_users": [
+    {
+      "username": "john",
+      "password": "demo",
+      "role": "user"
+    },
+    {
+      "username": "admin",
+      "password": "admin",
+      "role": "admin"
+    }
+  ],
+  "test_customers": [
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "555-1234"
+    },
+    {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane.smith@example.com",
+      "phone": "555-5678"
+    }
+  ]
+}

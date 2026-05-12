@@ -1,0 +1,617 @@
+name: ParaBank Test Framework CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run nightly regression tests
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - smoke
+        - regression
+        - security
+        - performance
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+
+env:
+  PYTHON_VERSION: '3.9'
+  NODE_VERSION: '18'
+
+jobs:
+  # Code Quality and Security Scans
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 black isort mypy bandit safety
+
+    - name: Run Black formatter check
+      run: black --check --diff src/ tests/
+
+    - name: Run isort import check
+      run: isort --check-only --diff src/ tests/
+
+    - name: Run flake8 linting
+      run: flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503
+
+    - name: Run mypy type checking
+      run: mypy src/ --ignore-missing-imports
+
+    - name: Run bandit security scan
+      run: bandit -r src/ -f json -o bandit-report.json
+
+    - name: Run safety dependency check
+      run: safety check --json --output safety-report.json
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  # Unit Tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-mock
+
+    - name: Run unit tests with coverage
+      run: |
+        pytest tests/unit/ \
+          --cov=src \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term-missing \
+          --junit-xml=unit-test-results.xml \
+          -v
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unit-tests
+        name: codecov-umbrella
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: unit-test-results
+        path: |
+          unit-test-results.xml
+          htmlcov/
+          coverage.xml
+
+  # UI Tests - Smoke
+  ui-tests-smoke:
+    name: UI Tests - Smoke
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'smoke' || github.event.inputs.test_type == ''
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+      fail-fast: false
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-playwright pytest-xdist
+
+    - name: Install Playwright browsers
+      run: |
+        python -m playwright install ${{ matrix.browser }}
+        python -m playwright install-deps
+
+    - name: Start ParaBank application
+      run: |
+        docker-compose -f docker/docker-compose.test.yml up -d
+        sleep 10
+
+    - name: Run smoke tests
+      run: |
+        pytest tests/ui/ \
+          -m smoke \
+          --browser ${{ matrix.browser }} \
+          --headed=false \
+          --timeout=30000 \
+          --junit-xml=smoke-test-results-${{ matrix.browser }}.xml \
+          --alluredir=allure-results-smoke-${{ matrix.browser }} \
+          -v
+
+    - name: Upload Allure results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: allure-results-smoke-${{ matrix.browser }}
+        path: allure-results-smoke-${{ matrix.browser }}/
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: smoke-test-results-${{ matrix.browser }}
+        path: smoke-test-results-${{ matrix.browser }}.xml
+
+    - name: Stop ParaBank application
+      if: always()
+      run: docker-compose -f docker/docker-compose.test.yml down
+
+  # UI Tests - Regression
+  ui-tests-regression:
+    name: UI Tests - Regression
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'regression'
+    strategy:
+      matrix:
+        browser: [chromium]
+      fail-fast: false
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-playwright pytest-xdist
+
+    - name: Install Playwright browsers
+      run: |
+        python -m playwright install chromium
+        python -m playwright install-deps
+
+    - name: Start ParaBank application
+      run: |
+        docker-compose -f docker/docker-compose.test.yml up -d
+        sleep 10
+
+    - name: Run regression tests
+      run: |
+        pytest tests/ui/ \
+          -m regression \
+          --browser chromium \
+          --headed=false \
+          --timeout=60000 \
+          --junit-xml=regression-test-results.xml \
+          --alluredir=allure-results-regression \
+          --parallel-workers=2 \
+          -v
+
+    - name: Upload Allure results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: allure-results-regression
+        path: allure-results-regression/
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: regression-test-results
+        path: regression-test-results.xml
+
+    - name: Stop ParaBank application
+      if: always()
+      run: docker-compose -f docker/docker-compose.test.yml down
+
+  # Security Tests
+  security-tests:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'security'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-playwright
+
+    - name: Install Playwright browsers
+      run: |
+        python -m playwright install chromium
+        python -m playwright install-deps
+
+    - name: Start ParaBank application
+      run: |
+        docker-compose -f docker/docker-compose.test.yml up -d
+        sleep 10
+
+    - name: Run security tests
+      run: |
+        pytest tests/ui/ \
+          -m security \
+          --browser chromium \
+          --headed=false \
+          --timeout=60000 \
+          --junit-xml=security-test-results.xml \
+          --alluredir=allure-results-security \
+          -v
+
+    - name: Upload Allure results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: allure-results-security
+        path: allure-results-security/
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-test-results
+        path: security-test-results.xml
+
+    - name: Stop ParaBank application
+      if: always()
+      run: docker-compose -f docker/docker-compose.test.yml down
+
+  # Performance Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'performance'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-playwright pytest-benchmark
+
+    - name: Install Playwright browsers
+      run: |
+        python -m playwright install chromium
+        python -m playwright install-deps
+
+    - name: Start ParaBank application
+      run: |
+        docker-compose -f docker/docker-compose.test.yml up -d
+        sleep 10
+
+    - name: Run performance tests
+      run: |
+        pytest tests/ui/ \
+          -m performance \
+          --browser chromium \
+          --headed=false \
+          --timeout=60000 \
+          --junit-xml=performance-test-results.xml \
+          --benchmark-only \
+          --benchmark-json=benchmark-results.json \
+          -v
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: performance-results
+        path: |
+          performance-test-results.xml
+          benchmark-results.json
+
+    - name: Stop ParaBank application
+      if: always()
+      run: docker-compose -f docker/docker-compose.test.yml down
+
+  # Generate Reports
+  generate-reports:
+    name: Generate Test Reports
+    runs-on: ubuntu-latest
+    needs: [ui-tests-smoke, ui-tests-regression, security-tests]
+    if: always()
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install allure-pytest
+
+    - name: Download Allure results
+      uses: actions/download-artifact@v3
+      with:
+        pattern: allure-results-*
+        merge-multiple: true
+        path: allure-results
+
+    - name: Generate Allure report
+      run: |
+        allure generate allure-results --clean -o allure-report
+
+    - name: Upload Allure report
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-report
+        path: allure-report/
+
+    - name: Publish Allure report to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        destination_dir: allure-report
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [ui-tests-smoke, generate-reports]
+    if: github.ref == 'refs/heads/develop' && success()
+    environment: staging
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Add deployment commands here
+        # Example: docker build and push to staging registry
+
+  # Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [ui-tests-regression, generate-reports]
+    if: github.ref == 'refs/heads/main' && success()
+    environment: production
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production environment..."
+        # Add deployment commands here
+        # Example: docker build and push to production registry
+
+  # Notify Results
+  notify-results:
+    name: Notify Test Results
+    runs-on: ubuntu-latest
+    needs: [generate-reports]
+    if: always()
+    steps:
+    - name: Download test results
+      uses: actions/download-artifact@v3
+      with:
+        pattern: "*-test-results.xml"
+        merge-multiple: true
+        path: test-results
+
+    - name: Parse test results
+      id: parse-results
+      run: |
+        python3 << 'EOF'
+        import xml.etree.ElementTree as ET
+        import json
+        import os
+        
+        total_tests = 0
+        total_failures = 0
+        total_errors = 0
+        total_skipped = 0
+        
+        for file in os.listdir('test-results'):
+            if file.endswith('.xml'):
+                tree = ET.parse(f'test-results/{file}')
+                root = tree.getroot()
+                
+                total_tests += int(root.attrib.get('tests', 0))
+                total_failures += int(root.attrib.get('failures', 0))
+                total_errors += int(root.attrib.get('errors', 0))
+                total_skipped += int(root.attrib.get('skipped', 0))
+        
+        passed = total_tests - total_failures - total_errors - total_skipped
+        pass_rate = (passed / total_tests * 100) if total_tests > 0 else 0
+        
+        results = {
+            'total_tests': total_tests,
+            'passed': passed,
+            'failures': total_failures,
+            'errors': total_errors,
+            'skipped': total_skipped,
+            'pass_rate': pass_rate
+        }
+        
+        with open('results.json', 'w') as f:
+            json.dump(results, f)
+        
+        print(f"::set-output name=results::{json.dumps(results)}")
+        EOF
+
+    - name: Send Slack notification
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#ci-cd'
+        text: |
+          ParaBank Test Results:
+          Total Tests: ${{ steps.parse-results.outputs.results }}
+          Pass Rate: ${{ fromJson(steps.parse-results.outputs.results).pass_rate }}%
+          View Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Email notification
+      if: failure()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "ParaBank Test Framework - Build Failed"
+        body: |
+          Build Status: ${{ job.status }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Test Results: ${{ steps.parse-results.outputs.results }}
+          View Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/
+        to: ${{ secrets.NOTIFICATION_EMAIL }}
+        from: ${{ secrets.EMAIL_USERNAME }}

@@ -1,0 +1,1 @@
+"""Loan request UI tests."""
