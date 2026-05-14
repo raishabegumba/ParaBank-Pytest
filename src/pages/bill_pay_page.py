@@ -42,7 +42,8 @@ class BillPayPage(BasePage):
     @retry_with_backoff(max_attempts=3, base_delay=0.5)
     def navigate_to_bill_pay(self) -> None:
         """Navigate to bill pay page with retry mechanism."""
-        self.goto(f"{self.page.context.browser._browser_options.base_url}/billpay.htm")
+        base = self.page.url.split('index.htm')[0].split('overview.htm')[0].split('login.htm')[0]
+        self.goto(f"{base}billpay.htm")
         self.wait_helper.wait_for_element(self.FROM_ACCOUNT_SELECT, WaitStrategy.ELEMENT_VISIBLE)
         log.info("Successfully navigated to bill pay page")
 

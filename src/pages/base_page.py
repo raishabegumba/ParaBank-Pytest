@@ -12,13 +12,18 @@ class BasePage:
         self.log = log
 
     def goto(self, url: str):
-        """Navigate to URL."""
+        """Navigate to URL.
+
+        ParaBank pages can be slow/flaky; avoid waiting for full `load` by
+        defaulting to `domcontentloaded`.
+        """
         try:
-            self.page.goto(url)
+            self.page.goto(url, wait_until="domcontentloaded")
             self.log.info(f"Navigated to {url}")
         except Exception as e:
             self.log.error(f"Failed to navigate to {url}. Error: {e}")
             raise
+
 
     def find_element(self, selector: str, timeout: int = 10000):
         """Find element."""

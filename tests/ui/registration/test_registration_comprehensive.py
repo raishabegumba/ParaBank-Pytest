@@ -3,7 +3,16 @@ import pytest
 from playwright.sync_api import Page
 from src.pages.registration_page import RegistrationPage
 from src.utils.wait_helpers import WaitStrategy
-from src.fixtures.test_data_fixtures import user_test_data, boundary_test_data, security_test_data
+from src.fixtures.test_data_fixtures import security_test_data
+from src.fixtures.test_data_fixtures import user_test_data as user_test_data_fixture
+from src.fixtures.test_data_fixtures import boundary_test_data as boundary_test_data_fixture
+
+# Backwards/compat: these modules were written to sometimes be used as
+# fixtures (pytest would inject them) and sometimes as plain module data.
+# This test file expects `user_test_data` and `boundary_test_data` as fixtures,
+# so we alias them to fixture-style names.
+user_test_data = user_test_data_fixture
+boundary_test_data = boundary_test_data_fixture
 from src.config.settings import get_settings
 from src.config.logger import log
 
@@ -210,10 +219,11 @@ class TestRegistrationComprehensive:
     @pytest.mark.parametrize("ssn,expected_error", [
         ("", "SSN is required"),
         ("123", "SSN must be 9 digits"),
-        "1234567890", "SSN must be 9 digits",
+        ("1234567890", "SSN must be 9 digits"),
         ("abc-45-6789", "SSN must contain only digits and valid separators"),
         ("123-45-67890", "SSN format is invalid")
     ])
+
     def test_ssn_validation(self, ssn, expected_error):
         """Test SSN field validation."""
         # Arrange

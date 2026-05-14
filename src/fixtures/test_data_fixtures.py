@@ -9,19 +9,18 @@ from src.config.settings import get_settings
 from src.config.logger import log
 
 
+# Provide `fake_data` as a fixture (some tests depend on this exact name).
 @pytest.fixture(scope="session")
 def fake_data() -> Faker:
-    """
-    Faker instance for generating test data.
-    
-    Returns:
-        Faker instance
-    """
+    """Faker instance for generating test data."""
     return Faker()
+
+
 
 
 @pytest.fixture(scope="session")
 def user_test_data(fake_data: Faker) -> Dict[str, Any]:
+
     """
     User test data fixture.
     
@@ -209,55 +208,60 @@ def payee_test_data(fake_data: Faker) -> Dict[str, Any]:
     }
 
 
+# NOTE:
+# Some tests import `security_test_data` and `boundary_test_data` as plain data
+# (not as pytest fixtures) and then subscript them, e.g. security_test_data['xss_payloads'].
+# To support both usage patterns, we provide these as module-level data dicts,
+# not as fixtures.
+
+security_test_data: Dict[str, Any] = {
+    'xss_payloads': [
+        '<script>alert("XSS")</script>',
+        '"><script>alert("XSS")</script>',
+        '<img src=x onerror=alert("XSS")>',
+        'javascript:alert("XSS")',
+        '<svg onload=alert("XSS")>'
+    ],
+    'sql_injection_payloads': [
+        "' OR '1'='1",
+        "' OR 1=1--",
+        "'; DROP TABLE users;--",
+        "' UNION SELECT * FROM users--",
+        "admin'--"
+    ],
+    'invalid_usernames': [
+        'admin',
+        'administrator',
+        'root',
+        'test',
+        'guest',
+        '<script>alert("XSS")</script>',
+        "' OR '1'='1"
+    ],
+    'weak_passwords': [
+        'password',
+        '123456',
+        'admin',
+        'qwerty',
+        'letmein',
+        'password123'
+    ],
+    'brute_force_attempts': [
+        'user1', 'user2', 'user3', 'test1', 'test2',
+        'admin1', 'admin2', 'john', 'jane', 'user'
+    ]
+}
+
+
 @pytest.fixture(scope="session")
-def security_test_data() -> Dict[str, Any]:
-    """
-    Security test data fixture.
-    
-    Returns:
-        Dictionary with security test data
-    """
-    return {
-        'xss_payloads': [
-            '<script>alert("XSS")</script>',
-            '"><script>alert("XSS")</script>',
-            '<img src=x onerror=alert("XSS")>',
-            'javascript:alert("XSS")',
-            '<svg onload=alert("XSS")>'
-        ],
-        'sql_injection_payloads': [
-            "' OR '1'='1",
-            "' OR 1=1--",
-            "'; DROP TABLE users;--",
-            "' UNION SELECT * FROM users--",
-            "admin'--"
-        ],
-        'invalid_usernames': [
-            'admin',
-            'administrator',
-            'root',
-            'test',
-            'guest',
-            '<script>alert("XSS")</script>',
-            "' OR '1'='1"
-        ],
-        'weak_passwords': [
-            'password',
-            '123456',
-            'admin',
-            'qwerty',
-            'letmein',
-            'password123'
-        ],
-        'brute_force_attempts': [
-            'user1', 'user2', 'user3', 'test1', 'test2',
-            'admin1', 'admin2', 'john', 'jane', 'user'
-        ]
-    }
+def security_test_data_fixture() -> Dict[str, Any]:
+    """Pytest fixture wrapper for compatibility with fixture-based tests."""
+    return security_test_data
 
 
 @pytest.fixture(scope="session")
 def performance_test_data() -> Dict[str, Any]:
+
     """
     Performance test data fixture.
     
@@ -411,22 +415,19 @@ def environment_test_data(get_settings) -> Dict[str, Any]:
     return base_data
 
 
-@pytest.fixture(scope="session")
-def boundary_test_data() -> Dict[str, Any]:
-    """
-    Boundary value test data fixture.
-    
-    Returns:
-        Dictionary with boundary test data
-    """
-    return {
-        'amount_boundaries': {
-            'minimum': '0.01',
-            'maximum': '999999.99',
-            'invalid_minimum': '0',
-            'invalid_maximum': '1000000.00',
-            'decimal_limits': ['0.1', '0.01', '0.001', '999999.999']
-        },
+
+
+boundary_test_data: Dict[str, Any] = {
+    'amount_boundaries': {
+        'minimum': '0.01',
+        'maximum': '999999.99',
+        # Backwards-compatible keys expected by existing tests
+        'invalid_minimum': '0',
+        'invalid_maximum': '1000000.00',
+        'invalid_amounts': ['0', '-1', 'abc', '1000000.00', ''],
+        'decimal_limits': ['0.1', '0.01', '0.001', '999999.999']
+    },
+
         'text_boundaries': {
             'min_length': 1,
             'max_length': 255,

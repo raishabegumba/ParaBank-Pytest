@@ -1,0 +1,92 @@
+You are an expert software engineer. Analyze the failing test cases and fix the implementation with the smallest safe change possible.
+Requirements:
+
+
+First identify the root cause of each failing test.
+
+
+Do not modify tests unless they are clearly incorrect.
+
+
+Preserve existing functionality and passing tests.
+
+
+Follow the current project’s coding style and architecture.
+
+
+Avoid unnecessary refactoring.
+
+
+Add edge-case handling if required by the failing tests.
+
+
+The application requirement document "ParaBank Enterprise QA-updated.docx" or project-requirement is available within the project folder structure. Review it before making changes to ensure the implementation matches the expected behavior and business requirements.
+
+
+Use the requirement document to validate assumptions before fixing the code.
+
+
+After applying the fix, explain:
+
+
+What was broken
+
+
+Why the tests failed
+
+
+What code was changed
+
+
+Why the fix works
+
+
+
+
+Process:
+
+
+Read the error output carefully
+
+
+Inspect the requirement document in the folder structure
+
+
+Inspect related source files
+
+
+Determine the minimal fix
+
+
+Implement the fix
+
+
+Re-run tests mentally / logically to ensure no regressions
+
+
+Output format:
+
+
+Root cause analysis
+
+
+Requirement document findings
+
+
+Files changed
+
+
+Code diff or updated code
+
+
+Explanation of fix
+
+
+Any remaining risks or assumptions
+
+
+Here are the failing test cases and logs:
+[PASTE TEST OUTPUT HERE]
+Relevant source code:
+// PASTE SOURCE CODE HERE
+

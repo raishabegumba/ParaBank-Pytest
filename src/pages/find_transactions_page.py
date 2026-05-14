@@ -41,7 +41,8 @@ class FindTransactionsPage(BasePage):
     @retry_with_backoff(max_attempts=3, base_delay=0.5)
     def navigate_to_find_transactions(self) -> None:
         """Navigate to find transactions page with retry mechanism."""
-        self.goto(f"{self.page.context.browser._browser_options.base_url}/findtrans.htm")
+        base = self.page.url.split('index.htm')[0].split('overview.htm')[0].split('login.htm')[0]
+        self.goto(f"{base}findtrans.htm")
         self.wait_helper.wait_for_element(self.ACCOUNT_SELECT, WaitStrategy.ELEMENT_VISIBLE)
         log.info("Successfully navigated to find transactions page")
 

@@ -16,7 +16,8 @@ class TestAccountsOverviewComprehensive:
     """Comprehensive accounts overview test suite."""
     
     @pytest.fixture(autouse=True)
-    def setup(self, authenticated_page: Page):
+    def setup(self, authenticated_user: Page):
+
         """Setup authenticated test instance."""
         self.page = authenticated_page
         self.accounts_page = AccountsOverviewPage(self.page)

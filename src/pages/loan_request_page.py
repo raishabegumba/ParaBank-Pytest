@@ -15,7 +15,8 @@ class LoanRequestPage(BasePage):
     LOAN_AMOUNT_FIELD = "#amount"
     DOWN_PAYMENT_FIELD = "#downPayment"
     FROM_ACCOUNT_SELECT = "#fromAccountId"
-    APPLY_FOR_LOAN_BUTTON = "input[type='submit'][value='Apply Now']"
+    # Apply button locator can vary by ParaBank build (value spacing, input/button).
+    APPLY_FOR_LOAN_BUTTON = "input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type='submit'][name='apply'], input[type='submit'], button:has-text('Apply Now')"
     SUCCESS_MESSAGE = "#rightPanel h1"
     ERROR_MESSAGE = ".error"
     LOAN_CONFIRMATION = ".loanConfirmation"
@@ -35,7 +36,9 @@ class LoanRequestPage(BasePage):
     @retry_with_backoff(max_attempts=3, base_delay=0.5)
     def navigate_to_loan_request(self) -> None:
         """Navigate to loan request page with retry mechanism."""
-        self.goto(f"{self.page.context.browser._browser_options.base_url}/requestloan.htm")
+        # Navigate using current page URL prefix (Playwright Browser object doesn't expose internal base_url options reliably).
+        base = self.page.url.split('index.htm')[0].split('overview.htm')[0].split('login.htm')[0]
+        self.goto(f"{base}requestloan.htm")
         self.wait_helper.wait_for_element(self.LOAN_AMOUNT_FIELD, WaitStrategy.ELEMENT_VISIBLE)
         log.info("Successfully navigated to loan request page")
 

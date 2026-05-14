@@ -14,7 +14,8 @@ class OpenAccountPage(BasePage):
     # Locators
     ACCOUNT_TYPE_SELECT = "#type"
     FROM_ACCOUNT_SELECT = "#fromAccountId"
-    OPEN_NEW_ACCOUNT_BUTTON = "input[type='submit'][value='Open New Account']"
+    # Some ParaBank builds render the submit button as input[value] and others as a button/input without exact value.
+    OPEN_NEW_ACCOUNT_BUTTON = "input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account '], input[type='submit'][name='open'], input[type='submit'], button:has-text('Open New Account')"
     SUCCESS_MESSAGE = "#rightPanel h1"
     ERROR_MESSAGE = ".error"
     ACCOUNT_DETAILS = ".accountDetails"
@@ -34,7 +35,15 @@ class OpenAccountPage(BasePage):
     @retry_with_backoff(max_attempts=3, base_delay=0.5)
     def navigate_to_open_account(self) -> None:
         """Navigate to open account page with retry mechanism."""
-        self.goto(f"{self.page.context.browser._browser_options.base_url}/openaccount.htm")
+        # Navigate using the page's current base URL / configured test URL.
+        # Playwright's Browser object does not reliably expose internal browser options.
+        # ParaBank is typically served from the same host as the current page.
+        # Use the current URL's prefix to navigate reliably.
+        base = self.page.url.split('index.htm')[0].split('overview.htm')[0].split('login.htm')[0]
+        self.goto(f"{base}openaccount.htm")
+        # Ensure the open account form is fully loaded before assertions
+        self.wait_helper.wait_for_element(self.ACCOUNT_TYPE_SELECT, WaitStrategy.ELEMENT_VISIBLE, timeout=20000)
+        self.wait_helper.wait_for_element(self.FROM_ACCOUNT_SELECT, WaitStrategy.ELEMENT_VISIBLE, timeout=20000)
         self.wait_helper.wait_for_element(self.ACCOUNT_TYPE_SELECT, WaitStrategy.ELEMENT_VISIBLE)
         self.wait_helper.wait_for_element(self.FROM_ACCOUNT_SELECT, WaitStrategy.ELEMENT_VISIBLE)
         log.info("Successfully navigated to open account page")

@@ -10,6 +10,9 @@ class BaseAPI:
 
     def __init__(self, base_url: Optional[str] = None):
         """Initialize API client."""
+        # Some environments may not expose a dedicated JSON REST API.
+        # If api_base_url points to a non-existing API namespace, callers should
+        # override base_url in tests. We keep the default as-is.
         self.base_url = base_url or settings.api_base_url
         self.session = requests.Session()
         self.log = log

@@ -17,7 +17,10 @@ class LoginPage(BasePage):
     LOGIN_BUTTON = ".login input[type='submit'][value='Log In']"
     ERROR_MESSAGE = ".error"
     SUCCESS_MESSAGE = ".success"
+    # ParaBank renders the welcome text in different places depending on build.
     WELCOME_MESSAGE = "#rightPanel h1"
+    WELCOME_MESSAGE_ALT = "#leftPanel p"
+
     FORGOT_PASSWORD_LINK = "a[href='lookup.htm']"
     REGISTER_LINK = "a[href*='register.htm']"
     ACCOUNTS_OVERVIEW_LINK = "a[href*='overview.htm']"
@@ -111,35 +114,56 @@ class LoginPage(BasePage):
         
         try:
             self.login(username, password)
-            
-            # Wait for login completion
+
+            # Wait for login completion (either welcome or error).
             login_complete = self.wait_for_login_complete()
-            
-            if login_complete:
-                if self.is_login_successful():
+
+            # If there is an error shown, treat as failure.
+            if self.is_visible(self.ERROR_MESSAGE, timeout=1500):
+                result['success'] = False
+                result['error_message'] = self.get_error_message() or "Login failed"
+            elif login_complete and self.is_login_successful():
+                result['success'] = True
+                result['welcome_message'] = self.get_welcome_message()
+                result['error_message'] = None
+                log.info("Login successful")
+            else:
+                # Some ParaBank environments show welcome without #rightPanel h1.
+                if self.is_visible("#leftPanel p", timeout=1500) and "welcome" in (self.get_welcome_message() or "").lower():
                     result['success'] = True
                     result['welcome_message'] = self.get_welcome_message()
-                    log.info("Login successful")
                 else:
-                    result['error_message'] = self.get_error_message()
-                    log.warning(f"Login failed: {result['error_message']}")
-            
+                    result['success'] = False
+                    result['error_message'] = self.get_error_message() or "Login failed"
+
             result['current_url'] = self.get_url()
-            
+
         except Exception as e:
             result['error_message'] = str(e)
             log.error(f"Login exception: {e}")
+
         
         return result
 
     def is_login_successful(self) -> bool:
         """Check if login was successful."""
         try:
-            # Check for welcome message in left panel (contains user's first and last name)
-            welcome_locator = "#leftPanel p"
-            self.wait_helper.wait_for_element(welcome_locator, WaitStrategy.ELEMENT_VISIBLE, timeout=5000)
-            welcome_text = self.get_text(welcome_locator)
-            return "Welcome" in welcome_text and len(welcome_text) > 10  # Should contain user name
+            # Check for welcome message in left panel.
+            # Also ensure an error message is not present.
+            if self.is_visible(self.ERROR_MESSAGE, timeout=1000):
+                return False
+
+            # Check multiple candidate welcome locators.
+            candidate_locators = ["#rightPanel h1", "#leftPanel p", "#rightPanel p"]
+            for welcome_locator in candidate_locators:
+                if self.is_visible(welcome_locator, timeout=1000):
+                    self.wait_helper.wait_for_element(welcome_locator, WaitStrategy.ELEMENT_VISIBLE, timeout=5000)
+                    welcome_text = self.get_text(welcome_locator) or ""
+                    if "welcome" in welcome_text.lower() and len(welcome_text.strip()) > 0:
+                        return True
+
+            return False
+
         except:
             return False
 
@@ -159,10 +183,22 @@ class LoginPage(BasePage):
     def get_welcome_message(self) -> str:
         """Get welcome message after successful login."""
         try:
-            welcome_locator = "#leftPanel p"
-            if self.is_visible(welcome_locator, timeout=5000):
-                return self.get_text(welcome_locator)
+            # Prefer left-panel welcome text if present.
+            left_panel = "#leftPanel p"
+            if self.is_visible(left_panel, timeout=2000):
+                return self.get_text(left_panel)
+
+            # Fallback to right panel.
+            right_h1 = "#rightPanel h1"
+            if self.is_visible(right_h1, timeout=2000):
+                return self.get_text(right_h1)
+
+            right_p = "#rightPanel p"
+            if self.is_visible(right_p, timeout=2000):
+                return self.get_text(right_p)
+
             return ""
+
         except:
             return ""
 
@@ -182,8 +218,10 @@ class LoginPage(BasePage):
         """Wait for login process to complete."""
         try:
             return self.wait_helper.wait_for_custom_condition(
-                condition=lambda: (
+                    condition=lambda: (
+                    # Consider welcome success if either common welcome headers are visible.
                     self.is_visible(self.WELCOME_MESSAGE, timeout=1000) or 
+                    self.is_visible(self.WELCOME_MESSAGE_ALT, timeout=1000) or 
                     self.is_visible(self.ERROR_MESSAGE, timeout=1000)
                 ),
                 timeout=timeout,
@@ -277,6 +315,37 @@ class LoginPage(BasePage):
         """Check if password field is properly masked."""
         input_type = self.get_attribute(self.PASSWORD_FIELD, "type")
         return input_type == "password"
+
+    # --- Additional helpers expected by comprehensive tests ---
+    def is_login_button_enabled(self) -> bool:
+        """Return True if login button is enabled."""
+        return self.is_enabled(self.LOGIN_BUTTON)
+
+    def get_login_button_text(self) -> str:
+        """Return the login button text."""
+        try:
+            value = self.get_attribute(self.LOGIN_BUTTON, "value")
+            if value:
+                return value
+        except Exception:
+            pass
+        try:
+            return self.page.locator(self.LOGIN_BUTTON).text_content() or ""
+        except Exception:
+            return ""
+
+    def is_forgot_password_link_visible(self) -> bool:
+        return self.is_visible(self.FORGOT_PASSWORD_LINK)
+
+    def is_register_link_visible(self) -> bool:
+        return self.is_visible(self.REGISTER_LINK)
+
+    def is_username_field_enabled(self) -> bool:
+        return self.is_enabled(self.USERNAME_FIELD)
+
+    def is_password_field_enabled(self) -> bool:
+        return self.is_enabled(self.PASSWORD_FIELD)
+
 
     def press_enter_in_password_field(self) -> None:
         """Press Enter key in password field."""

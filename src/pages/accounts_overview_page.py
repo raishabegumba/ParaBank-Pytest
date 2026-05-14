@@ -37,7 +37,8 @@ class AccountsOverviewPage(BasePage):
     @retry_with_backoff(max_attempts=3, base_delay=0.5)
     def navigate_to_accounts_overview(self) -> None:
         """Navigate to accounts overview page with retry mechanism."""
-        self.goto(f"{self.page.context.browser._browser_options.base_url}/overview.htm")
+        self.goto(f"{self.page.url or ''}")
+
         self.wait_helper.wait_for_element(self.ACCOUNTS_TABLE, WaitStrategy.ELEMENT_VISIBLE, timeout=10000)
         log.info("Successfully navigated to accounts overview page")
 

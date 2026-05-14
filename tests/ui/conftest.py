@@ -55,14 +55,24 @@ def page(page: Page, test_environment):
     # Set default timeout
     page.set_default_timeout(test_environment['timeout'])
     
-    # Set base URL for navigation
+    # Set base URL for navigation (retry because ParaBank can be slow/flaky under load)
     if test_environment['base_url']:
-        page.goto(test_environment['base_url'])
+        last_err = None
+        for _ in range(3):
+            try:
+                page.goto(test_environment['base_url'], wait_until="domcontentloaded")
+                last_err = None
+                break
+            except Exception as e:
+                last_err = e
+        if last_err is not None:
+            raise last_err
     
     yield page
     
     # Cleanup after test
     page.close()
+
 
 
 @pytest.fixture
@@ -203,7 +213,9 @@ def test_setup_teardown(request, page: Page, test_environment):
     yield
     
     # Take screenshot on failure if enabled
-    if request.node.rep_call.failed and test_environment['screenshot_on_failure']:
+    rep_call = getattr(request.node, "rep_call", None)
+    if getattr(rep_call, "failed", False) and test_environment['screenshot_on_failure']:
+
         try:
             screenshot_path = f"screenshots/{test_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
             os.makedirs('screenshots', exist_ok=True)
@@ -345,14 +357,61 @@ def data_generator():
 
 
 # Pytest hooks for enhanced reporting
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """Hook for test reporting and screenshots."""
+    """Capture per-phase report for later JSON artifact generation."""
     outcome = yield
     rep = outcome.get_result()
-    
-    # Add test result to item for screenshot fixture
     setattr(item, "rep_" + rep.when, rep)
+
+
+@pytest.fixture(autouse=True)
+def _write_test_report_json(request, page: Page):
+    """Write reports/html/test_report_<test>.json so HTML report can list PASS/FAIL."""
+    from src.config.settings import get_settings
+    import json
+    from pathlib import Path
+
+    settings = get_settings()
+    report_dir = Path(settings.html_report_dir)
+
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    test_name = str(request.node.name)
+    test_file = str(request.fspath)
+    start_time = datetime.now().isoformat()
+
+    yield
+
+    rep_call = getattr(request.node, "rep_call", None)
+    status = "passed"
+    error_message = ""
+    if rep_call is not None and getattr(rep_call, "failed", False):
+        status = "failed"
+        error_message = str(rep_call.longrepr) if getattr(rep_call, "longrepr", None) else "Unknown error"
+    elif rep_call is not None and getattr(rep_call, "skipped", False):
+        status = "skipped"
+        error_message = str(rep_call.longrepr) if getattr(rep_call, "longrepr", None) else "Skipped"
+
+    payload = {
+        "test_name": test_name,
+        "test_file": test_file,
+        "status": status,
+        "duration": (datetime.now() - datetime.fromisoformat(start_time)).total_seconds() if start_time else 0.0,
+        "error_message": error_message,
+        "start_time": start_time,
+        "end_time": datetime.now().isoformat(),
+        "metadata": {
+            "markers": [m.name for m in request.node.iter_markers()],
+            "node_id": request.node.nodeid,
+        },
+    }
+
+    safe_name = test_name.replace('/', '_').replace(':', '_')
+    out_path = report_dir / f"test_report_{safe_name}.json"
+    out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+
 
 
 def pytest_configure(config):
