@@ -20,9 +20,21 @@ src/__pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
-reports/
-logs/
-*.log
+
+# Reports and logs
+reports/**/*.html
+reports/**/*.json
+logs/**/*.log
+
+# Keep folders tracked
+!reports/
+!reports/html/
+!logs/
+
+# Keep placeholder files
+!reports/.gitkeep
+!reports/html/.gitkeep
+!logs/.gitkeep
 
 # OS
 .DS_Store

@@ -1,0 +1,4 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m201[0m - [1mStarting test: test_navigation_menu_visible[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m211[0m - [1mScreenshot saved: screenshots/test_navigation_menu_visible_20260512_181135.png[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m215[0m - [1mCompleted test: test_navigation_menu_visible[0m

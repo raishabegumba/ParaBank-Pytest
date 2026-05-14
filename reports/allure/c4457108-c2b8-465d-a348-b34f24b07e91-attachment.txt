@@ -1,0 +1,8 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m201[0m - [1mStarting test: test_registration_error_message_display[0m
+[33m[1mWARNING [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m212[0m - [33m[1mAttempt 1 failed with AttributeError: 'Browser' object has no attribute '_browser_options'. Retrying in 0.41 seconds...[0m
+[33m[1mWARNING [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m212[0m - [33m[1mAttempt 2 failed with AttributeError: 'Browser' object has no attribute '_browser_options'. Retrying in 0.95 seconds...[0m
+[31m[1mERROR   [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m207[0m - [31m[1mException AttributeError not in retry list, stopping retries[0m
+[31m[1mERROR   [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m218[0m - [31m[1mAll 3 attempts failed[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m211[0m - [1mScreenshot saved: screenshots/test_registration_error_message_display_20260512_181253.png[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m215[0m - [1mCompleted test: test_registration_error_message_display[0m
