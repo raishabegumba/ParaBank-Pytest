@@ -1,0 +1,483 @@
+Software Requirements Specification (SRS)
+Functional Requirements Specification (FRS)
+Acceptance Criteria Repository
+Project
+ParaBank Retail Banking Web Application
+Sample crdential:zaeem123/Password@123
+Document Version
+Version: 1.0
+Document Type: Industry Standard SRS/FRS
+Prepared For: QA, Engineering, Product, Architecture, Delivery Governance
+Classification: Internal
+________________________________________
+1. DOCUMENT CONTROL
+Attribute	Value
+Project Name	ParaBank
+Application Type	Retail Banking Web Application
+Architecture	Spring MVC + JSP
+Integration Style	REST + SOAP
+Domain	Banking
+Requirement Type	Functional + Non-Functional
+Source	Reverse-engineered application analysis
+Status	Delivery Validation Draft
+________________________________________
+2. PURPOSE
+This document defines:
+•	Functional requirements
+•	Non-functional requirements
+•	User workflows
+•	Validation rules
+•	Acceptance criteria
+•	Business rules
+•	Security expectations
+•	Integration behaviors
+•	Testing expectations
+•	Traceability standards
+The purpose is to establish a delivery-ready requirement repository aligned to the observed ParaBank application behavior.
+________________________________________
+3. SCOPE
+In Scope
+•	User registration
+•	Authentication
+•	Account overview
+•	Account creation
+•	Fund transfer
+•	Bill payment
+•	Transaction search
+•	Loan requests
+•	Profile management
+•	Admin access
+•	API validation
+Out of Scope
+•	Real payment gateway processing
+•	Real banking integrations
+•	Credit bureau integration
+•	Real fraud detection systems
+•	Mobile native applications
+•	Enterprise IAM integration
+________________________________________
+4. STAKEHOLDERS
+Role	Responsibility
+Product Owner	Business requirements approval
+QA Team	Validation and testing
+Engineering Team	Feature implementation
+Security Team	Security validation
+DevOps Team	Deployment and operations
+Business Stakeholders	Workflow approval
+________________________________________
+5. USER ROLES
+Role ID	Role Name	Description
+ROLE-001	Anonymous User	Non-authenticated visitor
+ROLE-002	Customer	Authenticated banking customer
+ROLE-003	Administrator	Administrative user
+________________________________________
+6. HIGH-LEVEL APPLICATION FLOW
+Customer Journey
+1.	User accesses application
+2.	User registers or logs in
+3.	User accesses account overview
+4.	User performs banking operations
+5.	System records transactions
+6.	User logs out
+________________________________________
+7. FUNCTIONAL REQUIREMENTS SPECIFICATION (FRS)
+MODULE 1 — USER REGISTRATION
+7.1 Feature Overview
+Attribute	Value
+Module ID	MOD-001
+Module Name	User Registration
+Primary Actor	Anonymous User
+Goal	Create customer banking profile
+Priority	High
+________________________________________
+7.2 Functional Requirements
+FR-REG-001 — User Registration
+The system shall allow a new user to create a customer account.
+FR-REG-002 — Mandatory Field Validation
+The system shall validate all mandatory registration fields before submission.
+FR-REG-003 — Username Uniqueness
+The system shall reject duplicate usernames.
+FR-REG-004 — Password Confirmation
+The system shall validate that password and confirm password fields match.
+FR-REG-005 — Persistent User Creation
+The system shall persist successfully registered users.
+FR-REG-006 — Post-Registration Authentication
+The system shall redirect the user to the authenticated account area after successful registration.
+________________________________________
+7.3 Registration Fields
+Field	Type	Mandatory	Validation
+First Name	String	Yes	Non-empty
+Last Name	String	Yes	Non-empty
+Address	String	Yes	Non-empty
+City	String	Yes	Non-empty
+State	String	Yes	Non-empty
+ZIP Code	Numeric/String	Yes	Valid ZIP format
+Phone	Numeric/String	No	Valid phone format
+SSN	String	Yes	Valid pattern
+Username	String	Yes	Unique
+Password	Password	Yes	Match confirmation
+Confirm Password	Password	Yes	Match password
+________________________________________
+7.4 Acceptance Criteria
+AC-REG-001
+Given a user enters valid registration details
+When the user submits the registration form
+Then the system shall create the account successfully.
+AC-REG-002
+Given a duplicate username exists
+When the user submits registration
+Then the system shall display a validation error.
+AC-REG-003
+Given mandatory fields are blank
+When the user submits the form
+Then validation errors shall be displayed.
+AC-REG-004
+Given password fields do not match
+When the user submits the form
+Then the system shall reject the registration.
+AC-REG-005
+Given registration succeeds
+When account creation completes
+Then the user shall be redirected to the account overview page.
+________________________________________
+7.5 Security Requirements
+Requirement ID	Requirement
+SEC-REG-001	Password fields shall be masked
+SEC-REG-002	Input validation shall prevent malformed input
+SEC-REG-003	Authentication pages shall use HTTPS
+________________________________________
+7.6 Non-Functional Requirements
+NFR ID	Requirement
+NFR-REG-001	Registration response time shall be below 3 seconds
+NFR-REG-002	Registration shall support keyboard navigation
+NFR-REG-003	Validation messages shall be human readable
+________________________________________
+MODULE 2 — AUTHENTICATION
+8.1 Feature Overview
+Attribute	Value
+Module ID	MOD-002
+Module Name	Authentication
+Primary Actor	Customer
+Priority	Critical
+________________________________________
+8.2 Functional Requirements
+FR-AUTH-001
+The system shall authenticate valid users.
+FR-AUTH-002
+The system shall reject invalid credentials.
+FR-AUTH-003
+The system shall create an authenticated user session after successful login.
+FR-AUTH-004
+The system shall terminate the session during logout.
+FR-AUTH-005
+The system shall restrict access to authenticated pages for unauthenticated users.
+________________________________________
+8.3 Acceptance Criteria
+AC-AUTH-001
+Given valid credentials
+When the user logs in
+Then the system shall redirect the user to the accounts overview page.
+AC-AUTH-002
+Given invalid credentials
+When login is attempted
+Then the system shall display an authentication error.
+AC-AUTH-003
+Given an authenticated user
+When the user logs out
+Then the authenticated session shall terminate.
+AC-AUTH-004
+Given an unauthenticated user
+When the user accesses a protected page
+Then the system shall deny access or redirect to login.
+________________________________________
+8.4 Security Requirements
+Requirement ID	Requirement
+SEC-AUTH-001	Authentication pages shall require HTTPS
+SEC-AUTH-002	Sessions shall be invalidated during logout
+SEC-AUTH-003	Passwords shall never be displayed in plaintext
+________________________________________
+MODULE 3 — ACCOUNT OVERVIEW
+9.1 Functional Requirements
+FR-ACC-001
+The system shall display all customer accounts.
+FR-ACC-002
+The system shall display account balances.
+FR-ACC-003
+The system shall display transaction history.
+FR-ACC-004
+The system shall restrict users from viewing other customer accounts.
+________________________________________
+9.2 Acceptance Criteria
+AC-ACC-001
+Given an authenticated customer
+When the customer accesses account overview
+Then all associated accounts shall be displayed.
+AC-ACC-002
+Given accounts exist
+When the page loads
+Then balances shall be displayed beside each account.
+AC-ACC-003
+Given the customer selects an account
+When navigation occurs
+Then transaction history shall be displayed.
+________________________________________
+MODULE 4 — OPEN NEW ACCOUNT
+10.1 Functional Requirements
+FR-NEWACC-001
+The system shall allow customers to open checking accounts.
+FR-NEWACC-002
+The system shall allow customers to open savings accounts.
+FR-NEWACC-003
+The system shall require a funding account.
+FR-NEWACC-004
+The system shall generate a new account identifier.
+________________________________________
+10.2 Acceptance Criteria
+AC-NEWACC-001
+Given valid account details
+When the customer submits the request
+Then a new account shall be created.
+AC-NEWACC-002
+Given no funding account is selected
+When the request is submitted
+Then validation shall prevent submission.
+AC-NEWACC-003
+Given account creation succeeds
+When processing completes
+Then confirmation details shall be displayed.
+________________________________________
+MODULE 5 — TRANSFER FUNDS
+11.1 Functional Requirements
+FR-TRF-001
+The system shall allow transfers between valid accounts.
+FR-TRF-002
+The system shall debit the source account.
+FR-TRF-003
+The system shall credit the destination account.
+FR-TRF-004
+The system shall display transfer confirmation.
+FR-TRF-005
+The system shall reject invalid transfer requests.
+________________________________________
+11.2 Business Rules
+Rule ID	Rule
+BR-TRF-001	Transfer amount must be greater than zero
+BR-TRF-002	Source account is mandatory
+BR-TRF-003	Destination account is mandatory
+BR-TRF-004	Amount must be numeric
+________________________________________
+11.3 Acceptance Criteria
+AC-TRF-001
+Given valid source and destination accounts
+When a valid amount is submitted
+Then the transfer shall complete successfully.
+AC-TRF-002
+Given an invalid amount
+When transfer is attempted
+Then the system shall reject the transfer.
+AC-TRF-003
+Given missing account selection
+When transfer is attempted
+Then validation errors shall be displayed.
+AC-TRF-004
+Given successful transfer processing
+When processing completes
+Then confirmation details shall be displayed.
+________________________________________
+11.4 Non-Functional Requirements
+NFR ID	Requirement
+NFR-TRF-001	Transfer processing shall complete within 3 seconds under normal load
+NFR-TRF-002	Monetary values shall support decimal precision
+________________________________________
+MODULE 6 — BILL PAY
+12.1 Functional Requirements
+FR-BILL-001
+The system shall allow creation of payees.
+FR-BILL-002
+The system shall allow bill payments.
+FR-BILL-003
+The system shall validate payment details.
+________________________________________
+12.2 Acceptance Criteria
+AC-BILL-001
+Given valid payee information
+When payment is submitted
+Then the bill payment shall process successfully.
+AC-BILL-002
+Given invalid account confirmation
+When payment is submitted
+Then validation shall reject the request.
+AC-BILL-003
+Given mandatory fields are empty
+When payment is submitted
+Then validation errors shall be displayed.
+________________________________________
+MODULE 7 — FIND TRANSACTIONS
+13.1 Functional Requirements
+FR-TXN-001
+The system shall allow searching transactions by date.
+FR-TXN-002
+The system shall allow searching transactions by amount.
+FR-TXN-003
+The system shall allow searching transactions by transaction ID.
+________________________________________
+13.2 Acceptance Criteria
+AC-TXN-001
+Given valid search criteria
+When search is executed
+Then matching transactions shall be displayed.
+AC-TXN-002
+Given invalid search input
+When search is executed
+Then validation errors shall be displayed.
+________________________________________
+MODULE 8 — REQUEST LOAN
+14.1 Functional Requirements
+FR-LOAN-001
+The system shall allow users to request loans.
+FR-LOAN-002
+The system shall evaluate loan requests.
+FR-LOAN-003
+The system shall display approval or rejection status.
+________________________________________
+14.2 Acceptance Criteria
+AC-LOAN-001
+Given valid loan information
+When the request is submitted
+Then the system shall process the request.
+AC-LOAN-002
+Given invalid numeric values
+When the request is submitted
+Then validation errors shall be displayed.
+AC-LOAN-003
+Given loan evaluation completes
+When processing ends
+Then approval or rejection status shall be displayed.
+________________________________________
+MODULE 9 — UPDATE CONTACT INFO
+15.1 Functional Requirements
+FR-PROFILE-001
+The system shall allow authenticated users to update contact information.
+FR-PROFILE-002
+The system shall persist updated customer information.
+________________________________________
+15.2 Acceptance Criteria
+AC-PROFILE-001
+Given valid updated profile information
+When the user submits changes
+Then the system shall persist the updates.
+AC-PROFILE-002
+Given invalid profile data
+When submission occurs
+Then validation errors shall be displayed.
+________________________________________
+16. NON-FUNCTIONAL REQUIREMENTS
+16.1 Performance
+Requirement ID	Requirement
+NFR-PERF-001	Login response time shall be below 2 seconds
+NFR-PERF-002	Transfer response time shall be below 3 seconds
+NFR-PERF-003	Search response time shall be below 5 seconds
+________________________________________
+16.2 Reliability
+Requirement ID	Requirement
+NFR-REL-001	System shall maintain consistent transaction processing
+NFR-REL-002	System shall prevent data corruption during workflow execution
+________________________________________
+16.3 Accessibility
+Requirement ID	Requirement
+NFR-ACC-001	Forms shall support keyboard navigation
+NFR-ACC-002	Form controls shall include labels
+NFR-ACC-003	Error messages shall be readable
+________________________________________
+16.4 Compatibility
+Browser	Support
+Chrome	Supported
+Firefox	Supported
+Edge	Supported
+Safari	Supported
+________________________________________
+17. SECURITY REQUIREMENTS
+Requirement ID	Requirement
+SEC-001	Authentication shall be required for banking operations
+SEC-002	Sessions shall terminate after logout
+SEC-003	Password fields shall be masked
+SEC-004	Input validation shall reject malformed data
+SEC-005	Unauthorized access attempts shall be rejected
+________________________________________
+18. API REQUIREMENTS
+https://parabank.parasoft.com/parabank/api-docs/index.html
+
+Requirement ID	Requirement
+API-001	API responses shall use valid HTTP status codes
+API-002	Invalid payloads shall return validation errors
+API-003	Authenticated APIs shall require valid authentication
+________________________________________
+19. ERROR HANDLING REQUIREMENTS
+Requirement ID	Requirement
+ERR-001	Validation failures shall display user-friendly messages
+ERR-002	Authentication failures shall display login errors
+ERR-003	System errors shall not expose sensitive implementation details
+________________________________________
+20. TRACEABILITY MATRIX
+Requirement ID	Module	Acceptance Criteria
+FR-REG-001	Registration	AC-REG-001
+FR-AUTH-001	Authentication	AC-AUTH-001
+FR-ACC-001	Account Overview	AC-ACC-001
+FR-TRF-001	Transfer Funds	AC-TRF-001
+FR-BILL-001	Bill Pay	AC-BILL-001
+FR-LOAN-001	Loan Request	AC-LOAN-001
+________________________________________
+21. TESTING REQUIREMENTS
+Functional Testing
+•	Registration validation
+•	Authentication validation
+•	Account workflow validation
+•	Fund transfer validation
+•	Loan workflow validation
+Security Testing
+•	SQL injection testing
+•	XSS testing
+•	Session validation
+•	Authorization testing
+Regression Testing
+•	End-to-end workflow validation
+•	Navigation validation
+•	Transaction validation
+________________________________________
+22. DELIVERY READINESS CHECKLIST
+Area	Required
+Functional validation	Yes
+Security validation	Yes
+Regression testing	Yes
+Browser compatibility validation	Yes
+UAT signoff	Yes
+Production deployment approval	Yes
+________________________________________
+23. RISKS & ASSUMPTIONS
+Risks
+•	Session management vulnerabilities
+•	Duplicate transaction submissions
+•	Insufficient validation handling
+•	Authorization bypass risks
+Assumptions
+•	Backend persistence is operational
+•	Session management exists
+•	Banking workflows are stateful
+________________________________________
+24. FINAL DELIVERY ASSESSMENT
+Delivery Readiness
+Area	Status
+Functional Requirements	Ready
+Acceptance Criteria	Ready
+QA Validation	Ready
+Security Review	Partial
+Operational Readiness	Partial
+Final Recommendation
+The application requirements are sufficiently documented for:
+•	QA validation
+•	Functional testing
+•	Delivery review
+•	Traceability mapping
+•	Automation planning
+Additional operational and infrastructure validation is recommended before production deployment.
+

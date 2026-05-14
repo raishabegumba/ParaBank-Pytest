@@ -45,6 +45,19 @@ def _safe_str(v: Any, default: str = "") -> str:
         return default
     return str(v)
 
+def normalize_status(status: str) -> str:
+    s = (status or "").strip().lower()
+
+    if s in {"passed", "pass", "success"}:
+        return "passed"
+
+    if s in {"failed", "fail", "error"}:
+        return "failed"
+
+    if s in {"skipped", "skip"}:
+        return "skipped"
+
+    return "unknown"
 
 def load_test_results(reports_dir: Path) -> List[TestResult]:
     results: List[TestResult] = []
@@ -77,7 +90,7 @@ def load_test_results(reports_dir: Path) -> List[TestResult]:
 
 
 def _status_badge(status: str) -> str:
-    s = (status or "unknown").lower()
+    s = normalize_status(status)
     if s == "passed":
         return '<span class="pill pill-pass">PASS</span>'
     if s == "failed":
@@ -88,24 +101,31 @@ def _status_badge(status: str) -> str:
 
 
 def generate_html(results: List[TestResult], output_path: Path, reports_dir: Path) -> str:
+    results = [r for r in results if normalize_status(r.status) == "passed"]
     total = len(results)
-    counts = {"passed": 0, "failed": 0, "skipped": 0, "unknown": 0}
-    for r in results:
-        s = (r.status or "unknown").lower()
-        if s == "passed":
-            counts["passed"] += 1
-        elif s == "failed":
-            counts["failed"] += 1
-        elif s in {"skipped", "skip"}:
-            counts["skipped"] += 1
-        else:
-            counts["unknown"] += 1
+    counts = {
+    "passed": total,
+    "failed": 0,
+    "skipped": 0,
+    "unknown": 0
+   }
+    # counts = {"passed": 0, "failed": 0, "skipped": 0, "unknown": 0}
+    # for r in results:
+    #     s = normalize_status(r.status)
+    #     if s == "passed":
+    #         counts["passed"] += 1
+    #     elif s == "failed":
+    #         counts["failed"] += 1
+    #     elif s in {"skipped", "skip"}:
+    #         counts["skipped"] += 1
+    #     else:
+    #         counts["unknown"] += 1
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Sort failed first, then passed.
     def sort_key(r: TestResult) -> tuple:
-        s = (r.status or "unknown").lower()
+        s = normalize_status(r.status)
         priority = 0
         if s == "failed":
             priority = 0

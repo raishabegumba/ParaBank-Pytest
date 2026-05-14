@@ -368,14 +368,16 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture(autouse=True)
 def _write_test_report_json(request, page: Page):
-    """Write reports/html/test_report_<test>.json so HTML report can list PASS/FAIL."""
+    """Write reports/html/test_report_<test>.json so HTML report can list PASS/FAIL.
+
+    Note: This fixture must be robust even if the test fails early.
+    """
     from src.config.settings import get_settings
     import json
     from pathlib import Path
 
     settings = get_settings()
     report_dir = Path(settings.html_report_dir)
-
     report_dir.mkdir(parents=True, exist_ok=True)
 
     test_name = str(request.node.name)
@@ -384,7 +386,11 @@ def _write_test_report_json(request, page: Page):
 
     yield
 
+    # Prefer rep_call (set by pytest hooks) but fall back to phase reports.
     rep_call = getattr(request.node, "rep_call", None)
+    if rep_call is None:
+        rep_call = getattr(request.node, "rep_teardown", None) or getattr(request.node, "rep_setup", None)
+
     status = "passed"
     error_message = ""
     if rep_call is not None and getattr(rep_call, "failed", False):
@@ -411,6 +417,7 @@ def _write_test_report_json(request, page: Page):
     safe_name = test_name.replace('/', '_').replace(':', '_')
     out_path = report_dir / f"test_report_{safe_name}.json"
     out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+
 
 
 
