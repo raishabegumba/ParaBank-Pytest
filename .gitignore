@@ -1,11 +1,15 @@
+# =========================
 # Environment
+# =========================
 .env
 .env.local
 .venv/
 venv/
 env/
 
+# =========================
 # IDE
+# =========================
 .vscode/
 .idea/
 *.swp
@@ -14,37 +18,53 @@ env/
 __pycache__/
 *.egg-info/
 
-# Test Artifacts
+# =========================
+# Python Test Cache
+# =========================
 tests/__pycache__/
 src/__pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Reports and logs
-reports/**/*.html
+# =========================
+# Reports and Logs (SAFE RULES)
+# =========================
+
+# Ignore only generated/temporary report data
+reports/allure-results/
+reports/allure-report/
+reports/allure-report-fixed/
+
+# Ignore raw data files (if needed)
 reports/**/*.json
 logs/**/*.log
 
-# Keep folders tracked
+# IMPORTANT:
+# DO NOT ignore HTML reports globally
+# (so test_results.html will be tracked)
+
+# =========================
+# Keep folders tracked in Git
+# =========================
 !reports/
 !reports/html/
 !logs/
 
-# Keep placeholder files
+# Keep placeholders
 !reports/.gitkeep
 !reports/html/.gitkeep
 !logs/.gitkeep
 
-# OS
+# =========================
+# OS Files
+# =========================
 .DS_Store
 Thumbs.db
 
+# =========================
 # Build
+# =========================
 dist/
 build/
 *.egg
-
-# Reports
-allure-results/
-allure-report/
