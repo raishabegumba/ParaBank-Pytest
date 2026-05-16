@@ -1,0 +1,2 @@
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mpost[0m:[36m55[0m - [1mPOST http://localhost:8080/parabank/services/bank/initializeDatabase - Status: 404[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mclose_session[0m:[36m110[0m - [1mAPI session closed[0m

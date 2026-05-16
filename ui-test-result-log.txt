@@ -1,0 +1,697 @@
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: john.doe
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='password'] found with strategy visible
+INFO     | src.pages.login_page:enter_password:118 - Entered password
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[type='submit'][value='Log In'] found with strategy clickable
+INFO     | src.pages.base_page:click:55 - Clicked element: .login input[type='submit'][value='Log In']
+INFO     | src.pages.login_page:click_login:131 - Clicked login button
+INFO     | src.pages.login_page:login:217 - Login attempted for user: john.doe
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_e2e_accessibility_workflow_20260516_201345.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_e2e_accessibility_workflow
+____________________________________ TestEndToEndWorkflows.test_e2e_mobile_workflow _____________________________________
+tests\ui\workflows\test_end_to_end_workflows.py:370: in test_e2e_mobile_workflow
+    login_page.assert_login_successful()
+src\pages\login_page.py:432: in assert_login_successful
+    assert "overview.htm" in self.page.url, (
+E   AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_e2e_mobile_workflow
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: john.doe
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='password'] found with strategy visible
+INFO     | src.pages.login_page:enter_password:118 - Entered password
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[type='submit'][value='Log In'] found with strategy clickable
+INFO     | src.pages.base_page:click:55 - Clicked element: .login input[type='submit'][value='Log In']
+INFO     | src.pages.login_page:click_login:131 - Clicked login button
+INFO     | src.pages.login_page:login:217 - Login attempted for user: john.doe
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_e2e_mobile_workflow_20260516_201346.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_e2e_mobile_workflow
+____________________________________ TestE2ERegression.test_critical_path_regression ____________________________________
+tests\ui\workflows\test_end_to_end_workflows.py:439: in test_critical_path_regression
+    login_page.assert_login_successful()
+src\pages\login_page.py:432: in assert_login_successful
+    assert "overview.htm" in self.page.url, (
+E   AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_critical_path_regression
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: john.doe
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='password'] found with strategy visible
+INFO     | src.pages.login_page:enter_password:118 - Entered password
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[type='submit'][value='Log In'] found with strategy clickable
+INFO     | src.pages.base_page:click:55 - Clicked element: .login input[type='submit'][value='Log In']
+INFO     | src.pages.login_page:click_login:131 - Clicked login button
+INFO     | src.pages.login_page:login:217 - Login attempted for user: john.doe
+ERROR    | tests.ui.workflows.test_end_to_end_workflows:test_critical_path_regression:458 - Critical path regression failed: Expected overview page, got: http://localhost:8080/parabank/login.htm
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_critical_path_regression_20260516_201347.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_critical_path_regression
+_______________ TestSecurityComprehensive.test_registration_xss_protection[<script>alert("XSS")</script>] _______________
+tests\ui\workflows\test_security_comprehensive.py:51: in test_registration_xss_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_xss_protection[<script>alert("XSS")</script>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'C:\\Raisha-TerraFinn\\practice_project\\ParaBank-Pytest\\screenshots\\test_registration_xss_protection[<script>alert("XSS")<'
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_xss_protection[<script>alert("XSS")</script>]
+______________ TestSecurityComprehensive.test_registration_xss_protection["><script>alert("XSS")</script>] ______________
+tests\ui\workflows\test_security_comprehensive.py:51: in test_registration_xss_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_xss_protection["><script>alert("XSS")</script>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'C:\\Raisha-TerraFinn\\practice_project\\ParaBank-Pytest\\screenshots\\test_registration_xss_protection["><script>alert("XSS")<'
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_xss_protection["><script>alert("XSS")</script>]
+_____________ TestSecurityComprehensive.test_registration_xss_protection[<img src=x onerror=alert("XSS")>] ______________
+tests\ui\workflows\test_security_comprehensive.py:51: in test_registration_xss_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_xss_protection[<img src=x onerror=alert("XSS")>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [Errno 22] Invalid argument: 'screenshots/test_registration_xss_protection[<img src=x onerror=alert("XSS")>]_20260516_201357.png'
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_xss_protection[<img src=x onerror=alert("XSS")>]
+__________________ TestSecurityComprehensive.test_registration_xss_protection[javascript:alert("XSS")] __________________
+tests\ui\workflows\test_security_comprehensive.py:51: in test_registration_xss_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_xss_protection[javascript:alert("XSS")]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_registration_xss_protection[javascript:alert("XSS")]_20260516_201359.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_xss_protection[javascript:alert("XSS")]
+_________________ TestSecurityComprehensive.test_registration_xss_protection[<svg onload=alert("XSS")>] _________________
+tests\ui\workflows\test_security_comprehensive.py:51: in test_registration_xss_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_xss_protection[<svg onload=alert("XSS")>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [Errno 22] Invalid argument: 'screenshots/test_registration_xss_protection[<svg onload=alert("XSS")>]_20260516_201402.png'
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_xss_protection[<svg onload=alert("XSS")>]
+___________________ TestSecurityComprehensive.test_registration_sql_injection_protection[' OR '1'='1] ___________________
+tests\ui\workflows\test_security_comprehensive.py:93: in test_registration_sql_injection_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_sql_injection_protection[' OR '1'='1]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_registration_sql_injection_protection[' OR '1'='1]_20260516_201408.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_sql_injection_protection[' OR '1'='1]
+___________________ TestSecurityComprehensive.test_registration_sql_injection_protection[' OR 1=1--] ____________________
+tests\ui\workflows\test_security_comprehensive.py:93: in test_registration_sql_injection_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_sql_injection_protection[' OR 1=1--]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_registration_sql_injection_protection[' OR 1=1--]_20260516_201410.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_sql_injection_protection[' OR 1=1--]
+_____________ TestSecurityComprehensive.test_registration_sql_injection_protection['; DROP TABLE users;--] ______________
+tests\ui\workflows\test_security_comprehensive.py:93: in test_registration_sql_injection_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_sql_injection_protection['; DROP TABLE users;--]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_registration_sql_injection_protection['; DROP TABLE users;--]_20260516_201411.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_sql_injection_protection['; DROP TABLE users;--]
+__________ TestSecurityComprehensive.test_registration_sql_injection_protection[' UNION SELECT * FROM users--] __________
+tests\ui\workflows\test_security_comprehensive.py:93: in test_registration_sql_injection_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_sql_injection_protection[' UNION SELECT * FROM users--]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [Errno 22] Invalid argument: "screenshots/test_registration_sql_injection_protection[' UNION SELECT * FROM users--]_20260516_201413.png"
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_sql_injection_protection[' UNION SELECT * FROM users--]
+____________________ TestSecurityComprehensive.test_registration_sql_injection_protection[admin'--] _____________________
+tests\ui\workflows\test_security_comprehensive.py:93: in test_registration_sql_injection_protection
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_registration_sql_injection_protection[admin'--]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_registration_sql_injection_protection[admin'--]_20260516_201416.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_registration_sql_injection_protection[admin'--]
+____________________________ TestSecurityComprehensive.test_weak_password_security[password] ____________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[password]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[password]_20260516_201423.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[password]
+_____________________________ TestSecurityComprehensive.test_weak_password_security[123456] _____________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[123456]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[123456]_20260516_201426.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[123456]
+_____________________________ TestSecurityComprehensive.test_weak_password_security[admin] ______________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[admin]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[admin]_20260516_201428.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[admin]
+_____________________________ TestSecurityComprehensive.test_weak_password_security[qwerty] _____________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[qwerty]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[qwerty]_20260516_201430.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[qwerty]
+____________________________ TestSecurityComprehensive.test_weak_password_security[letmein] _____________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[letmein]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[letmein]_20260516_201433.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[letmein]
+__________________________ TestSecurityComprehensive.test_weak_password_security[password123] ___________________________
+tests\ui\workflows\test_security_comprehensive.py:132: in test_weak_password_security
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_weak_password_security[password123]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to https://parabank.parasoft.com/parabank/register.htm?ConnType=JDBC
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.firstName is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element #customer\.lastName is visible as expected
+INFO     | src.pages.registration_page:navigate_to_registration:48 - Successfully navigated to registration page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_weak_password_security[password123]_20260516_201438.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_weak_password_security[password123]
+_____________________________ TestSecurityComprehensive.test_session_security_after_logout ______________________________
+tests\ui\workflows\test_security_comprehensive.py:155: in test_session_security_after_logout
+    valid_user = user_test_data['valid_user']
+E   TypeError: 'function' object is not subscriptable
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_session_security_after_logout
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_session_security_after_logout_20260516_201440.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_session_security_after_logout
+_________________ TestInputSanitization.test_form_input_sanitization[<img src=x onerror=alert('XSS')>] __________________
+tests\ui\workflows\test_security_comprehensive.py:428: in test_form_input_sanitization
+    actual_value = page.evaluate("document.querySelector('#username').value")
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\sync_api\_generated.py:8531: in evaluate
+    self._sync(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_page.py:467: in evaluate
+    return await self._main_frame.evaluate(expression, arg)
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_frame.py:320: in evaluate
+    await self._channel.send(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+E       at eval (eval at evaluate (:290:30), <anonymous>:1:36)
+E       at eval (<anonymous>)
+E       at UtilityScript.evaluate (<anonymous>:290:30)
+E       at UtilityScript.<anonymous> (<anonymous>:1:44)
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_form_input_sanitization[<img src=x onerror=alert('XSS')>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: <img src=x onerror=alert('XSS')>
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [Errno 22] Invalid argument: "screenshots/test_form_input_sanitization[<img src=x onerror=alert('XSS')>]_20260516_201451.png"
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_form_input_sanitization[<img src=x onerror=alert('XSS')>]
+______________________ TestInputSanitization.test_form_input_sanitization[javascript:alert('XSS')] ______________________
+tests\ui\workflows\test_security_comprehensive.py:428: in test_form_input_sanitization
+    actual_value = page.evaluate("document.querySelector('#username').value")
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\sync_api\_generated.py:8531: in evaluate
+    self._sync(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_page.py:467: in evaluate
+    return await self._main_frame.evaluate(expression, arg)
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_frame.py:320: in evaluate
+    await self._channel.send(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+E       at eval (eval at evaluate (:290:30), <anonymous>:1:36)
+E       at eval (<anonymous>)
+E       at UtilityScript.evaluate (<anonymous>:290:30)
+E       at UtilityScript.<anonymous> (<anonymous>:1:44)
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_form_input_sanitization[javascript:alert('XSS')]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: javascript:alert('XSS')
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_form_input_sanitization[javascript:alert('XSS')]_20260516_201452.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_form_input_sanitization[javascript:alert('XSS')]
+_____________________ TestInputSanitization.test_form_input_sanitization[<svg onload=alert('XSS')>] _____________________
+tests\ui\workflows\test_security_comprehensive.py:428: in test_form_input_sanitization
+    actual_value = page.evaluate("document.querySelector('#username').value")
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\sync_api\_generated.py:8531: in evaluate
+    self._sync(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_page.py:467: in evaluate
+    return await self._main_frame.evaluate(expression, arg)
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_frame.py:320: in evaluate
+    await self._channel.send(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+E       at eval (eval at evaluate (:290:30), <anonymous>:1:36)
+E       at eval (<anonymous>)
+E       at UtilityScript.evaluate (<anonymous>:290:30)
+E       at UtilityScript.<anonymous> (<anonymous>:1:44)
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_form_input_sanitization[<svg onload=alert('XSS')>]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: <svg onload=alert('XSS')>
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+WARNING  | tests.ui.conftest:test_setup_teardown:249 - Failed to take screenshot: [Errno 22] Invalid argument: "screenshots/test_form_input_sanitization[<svg onload=alert('XSS')>]_20260516_201453.png"
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_form_input_sanitization[<svg onload=alert('XSS')>]
+______________________ TestInputSanitization.test_form_input_sanitization['; DROP TABLE users;--] _______________________
+tests\ui\workflows\test_security_comprehensive.py:428: in test_form_input_sanitization
+    actual_value = page.evaluate("document.querySelector('#username').value")
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\sync_api\_generated.py:8531: in evaluate
+    self._sync(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_page.py:467: in evaluate
+    return await self._main_frame.evaluate(expression, arg)
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_frame.py:320: in evaluate
+    await self._channel.send(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+C:\Users\raish\AppData\Local\Programs\Python\Python314\Lib\site-packages\playwright\_impl\_connection.py:559: in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E   playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+E       at eval (eval at evaluate (:290:30), <anonymous>:1:36)
+E       at eval (<anonymous>)
+E       at UtilityScript.evaluate (<anonymous>:290:30)
+E       at UtilityScript.<anonymous> (<anonymous>:1:44)
+------------------------------------------------- Captured stdout setup -------------------------------------------------
+INFO     | src.utils.webdriver_utils:get_browser_context:41 - Browser context created with viewport 1920x1080
+INFO     | tests.ui.conftest:test_setup_teardown:235 - Starting test: test_form_input_sanitization['; DROP TABLE users;--]
+------------------------------------------------- Captured stdout call --------------------------------------------------
+INFO     | src.pages.base_page:goto:22 - Navigated to http://localhost:8080/parabank
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='username'] is visible as expected
+INFO     | src.utils.assertion_helpers:assert_element_visible:26 - Element .login input[name='password'] is visible as expected
+INFO     | src.pages.login_page:navigate_to_login:47 - Successfully navigated to login page
+INFO     | src.utils.wait_helpers:wait_for_element:71 - Element .login input[name='username'] found with strategy visible
+INFO     | src.pages.login_page:enter_username:100 - Entered username: '; DROP TABLE users;--
+----------------------------------------------- Captured stdout teardown ------------------------------------------------
+INFO     | tests.ui.conftest:test_setup_teardown:247 - Screenshot saved: screenshots/test_form_input_sanitization['; DROP TABLE users;--]_20260516_201453.png
+INFO     | tests.ui.conftest:test_setup_teardown:251 - Completed test: test_form_input_sanitization['; DROP TABLE users;--]
+- Generated html report: file:///C:/Raisha-TerraFinn/practice_project/ParaBank-Pytest/reports/ui_test_report_16_05_2026.html -
+================================================ short test summary info ================================================
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_overview_loaded - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_table_display - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_account_details_access - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_navigation_buttons - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_logout_functionality - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_welcome_message_display - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_total_balance_display - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_account_search_by_type - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_account_balance_filtering - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_account_data_integrity - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_overview_performance - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_no_accounts_message - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_data_export - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_overview_accessibility - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_accounts_overview_refresh - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewComprehensive::test_account_details_structure - NameError: name 'authenticated_page' is not defined
+ERROR tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewParallel::test_parallel_accounts_load
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_valid_transfer
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario0]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario1]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario2]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario3]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario4]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario5]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_transfer_scenarios[scenario6]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_amounts[0]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_amounts[-1]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_amounts[abc]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_amounts[1000000.00]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_invalid_amounts[]
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_with_description
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_limits_validation
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_form_validation
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_account_selection_functionality
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_performance
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_confirmation_details
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_clear_transfer_form
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_navigation_to_accounts_overview
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_with_validation_simulation
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_large_amount_transfer
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsComprehensive::test_transfer_page_loaded
+ERROR tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsParallel::test_parallel_transfer_performance
+ERROR tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_e2e_performance_workflow
+ERROR tests/ui/workflows/test_end_to_end_workflows.py::TestE2EParallel::test_parallel_user_journey
+ERROR tests/ui/workflows/test_security_comprehensive.py::TestSecurityPerformance::test_security_performance_impact
+FAILED tests/ui/accounts/test_accounts_overview.py::TestAccountsOverviewPage::test_welcome_message_displays_correctly - AssertionError: Should contain welcome message
+FAILED tests/ui/accounts/test_accounts_overview.py::TestAccountsOverviewPage::test_account_count_accuracy - AssertionError: Count should match actual number of accounts
+FAILED tests/ui/accounts/test_accounts_overview_comprehensive.py::TestAccountsOverviewMobile::test_mobile_accounts_responsive - TimeoutError: Failed to wait for element #accountTable with strategy visible
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_page_loads_correctly - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_type_dropdown_populates_correctly - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_source_account_dropdown_populates_correctly - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_successful_opening_checking_account - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_successful_opening_savings_account - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_without_selecting_type_fails - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_without_selecting_source_fails - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_with_invalid_account_type_fails - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_with_invalid_source_account_fails - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_form_validation - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_accounts_overview_link_navigation - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_form_accessibility - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_page_load_performance - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_dropdown_population_performance - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_new_account_details_accuracy - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_new_account_id_format - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_clear_open_account_form - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_wait_for_account_opening_complete - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_opening_simulation_with_validation - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_opening_error_message_display - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_form_javascript_functionality - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_page_localization_elements - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_form_responsive_design - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_with_single_account_scenario - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_account_with_multiple_accounts_scenario - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_type_availability_validation - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_source_account_availability_validation - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_opening_summary - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_multiple_accounts_same_type - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_open_all_available_account_types - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/accounts/test_open_account.py::TestOpenAccountPage::test_account_opening_data_privacy - AssertionError: Element input[type='submit'][value='Open New Account'], input[type='submit'][value='Open New Account ...
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_page_loads_correctly - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_account_dropdown_populates_correctly - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_successful_payment_with_new_payee - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_zero_amount_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_negative_amount_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_invalid_amount_format_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_without_account_selection_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_without_amount_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_without_date_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_without_payee_info_fails - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_form_validation - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_limits_validation - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_accounts_overview_link_navigation - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_form_accessibility - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_page_load_performance - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_account_dropdown_population_performance - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_maximum_amount - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_decimal_amount - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_very_small_amount - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_future_date - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_past_date - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_clear_payment_form - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_wait_for_completion - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_confirmation_details - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_error_message_display - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_amount_field_security - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_form_javascript_functionality - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_page_localization_elements - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_bill_pay_form_responsive_design - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_single_account_scenario - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_multiple_accounts_scenario - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_add_new_payee_checkbox_functionality - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_special_characters_in_payee_name - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/bill_pay/test_bill_pay.py::TestBillPayPage::test_payment_with_long_description - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_page_loads_correctly - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_account_dropdown_populates_correctly - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_successful_loan_application - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_without_account_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_without_amount_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_without_down_payment_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_zero_amount_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_negative_amount_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_negative_down_payment_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_invalid_amount_format_fails - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_form_validation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_eligibility_validation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_accounts_overview_link_navigation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_form_accessibility - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_page_load_performance - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_account_dropdown_population_performance - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_maximum_amount - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_minimum_amount - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_decimal_amounts - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_application_with_zero_down_payment - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_clear_loan_request_form - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_wait_for_loan_processing_complete - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_confirmation_details_accuracy - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_simulation_with_validation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_error_message_display - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_amount_field_security - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_form_javascript_functionality - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_page_localization_elements - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_form_responsive_design - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_with_single_account_scenario - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_with_multiple_accounts_scenario - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_to_value_ratio_validation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_down_payment_percentage_validation - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_multiple_loan_applications_same_session - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/loan/test_loan_request.py::TestLoanRequestPage::test_loan_request_data_privacy - AssertionError: Element input[type='submit'][value='Apply Now'], input[type='submit'][value='Apply Now '], input[type...
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_successful_registration_with_valid_data - assert False
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_registration_with_duplicate_username - assert False
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_registration_form_accessibility - AssertionError: Field #customer\.firstName lacks proper labeling
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_form_validation_state - assert False
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_field_constraints_validation - assert False
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_registration_then_login - assert False
+FAILED tests/ui/registration/test_registration.py::TestRegistrationPage::test_registration_form_browser_compatibility - playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot set properties of null (setting 'value')
+FAILED tests/ui/registration/test_registration_edge.py::TestRegistrationEdge::test_invalid_phone_numbers[] - assert not True
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_page_loads_correctly - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_account_dropdown_populates_correctly - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_type_dropdown_populates_correctly - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_by_account - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_by_date - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_by_date_range - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_without_account_fails - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_with_invalid_date_format - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_with_invalid_amount_format - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_with_future_date - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_criteria_validation - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_accounts_overview_link_navigation - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_form_accessibility - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_page_load_performance - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_dropdown_population_performance - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_data_structure - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_count_accuracy - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_clear_search_form - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_by_type - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_by_amount - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_transactions_with_multiple_criteria - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_data_export - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_no_results_message_display - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_form_javascript_functionality - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_page_localization_elements - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_form_responsive_design - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_with_single_account_scenario - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_find_transactions_with_multiple_accounts_scenario - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_search_by_description - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_search_by_amount_range - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_with_very_wide_date_range - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_search_with_reversed_date_range - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_transaction_search_data_privacy - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transactions/test_find_transactions.py::TestFindTransactionsPage::test_complete_transaction_search_workflow - AssertionError: Element #transactionType should be visible but is not
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_funds_page_loads_correctly - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_account_dropdowns_populate_correctly - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_successful_transfer_with_valid_data - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_same_account_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_zero_amount_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_negative_amount_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_invalid_amount_format_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_without_selecting_accounts_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_without_amount_fails - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_form_validation - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_limits_validation - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_accounts_overview_link_navigation - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_form_accessibility - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_page_load_performance - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_account_dropdown_population_performance - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_maximum_amount - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_decimal_amount - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_very_small_amount - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_clear_transfer_form - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_wait_for_completion - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_confirmation_details - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_simulation_with_validation - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_error_message_display - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_amount_field_security - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_form_javascript_functionality - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_page_localization_elements - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_form_responsive_design - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_single_account_scenario - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds.py::TestTransferFundsPage::test_transfer_with_multiple_accounts_scenario - AttributeError: 'AssertionHelper' object has no attribute 'assert_element_clickable'. Did you mean: 'assert_element_i...
+FAILED tests/ui/transfer/test_transfer_funds_comprehensive.py::TestTransferFundsMobile::test_mobile_transfer_responsive - TimeoutError: Failed to wait for element #fromAccountId with strategy visible
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_complete_user_journey_registration_to_transfers - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_bill_payment_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_loan_request_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_transaction_search_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_multi_account_management_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_failed_registration_workflow - AssertionError: Element .error should be visible but is not
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_e2e_accessibility_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestEndToEndWorkflows::test_e2e_mobile_workflow - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_end_to_end_workflows.py::TestE2ERegression::test_critical_path_regression - AssertionError: Expected overview page, got: http://localhost:8080/parabank/login.htm
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_xss_protection[<script>alert("XSS")</script>] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_xss_protection["><script>alert("XSS")</script>] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_xss_protection[<img src=x onerror=alert("XSS")>] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_xss_protection[javascript:alert("XSS")] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_xss_protection[<svg onload=alert("XSS")>] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_sql_injection_protection[' OR '1'='1] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_sql_injection_protection[' OR 1=1--] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_sql_injection_protection['; DROP TABLE users;--] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_sql_injection_protection[' UNION SELECT * FROM users--] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_registration_sql_injection_protection[admin'--] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[password] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[123456] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[admin] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[qwerty] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[letmein] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_weak_password_security[password123] - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestSecurityComprehensive::test_session_security_after_logout - TypeError: 'function' object is not subscriptable
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestInputSanitization::test_form_input_sanitization[<img src=x onerror=alert('XSS')>] - playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestInputSanitization::test_form_input_sanitization[javascript:alert('XSS')] - playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestInputSanitization::test_form_input_sanitization[<svg onload=alert('XSS')>] - playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+FAILED tests/ui/workflows/test_security_comprehensive.py::TestInputSanitization::test_form_input_sanitization['; DROP TABLE users;--] - playwright._impl._errors.Error: Page.evaluate: TypeError: Cannot read properties of null (reading 'value')
+========================= 205 failed, 133 passed, 10 warnings, 45 errors in 4799.77s (1:19:59) ==========================
+PS C:\Raisha-TerraFinn\practice_project\ParaBank-Pytest> 

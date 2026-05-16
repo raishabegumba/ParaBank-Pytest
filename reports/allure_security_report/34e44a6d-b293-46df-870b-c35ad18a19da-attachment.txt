@@ -1,0 +1,5 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[31m[1mERROR   [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m76[0m - [31m[1mFailed to wait for element .login input[name='password'] with strategy visible: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator(".login input[name='password']") to be visible
+[0m

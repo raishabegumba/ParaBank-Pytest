@@ -46,7 +46,7 @@ class TestLoginPage:
     def test_login_with_valid_credentials(self):
         """Test login with valid credentials."""
         # Use test data from configuration
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         
         # Perform login using page object method
         self.login_page.navigate_to_login()
@@ -184,7 +184,7 @@ class TestLoginPage:
         self.login_page.navigate_to_login()
         
         # Fill credentials
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         self.login_page.enter_username(test_user["username"])
         self.login_page.enter_password(test_user["password"])
         
@@ -214,7 +214,7 @@ class TestLoginPage:
         """Test login response time."""
         self.login_page.navigate_to_login()
         
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         
         start_time = datetime.now()
         login_result = self.login_page.login_with_validation(
@@ -301,7 +301,7 @@ class TestLoginPage:
         assert form_exists, "Login form should be accessible via JavaScript"
         
         # Test form filling via JavaScript
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         self.page.evaluate(f"""
             () => {{
                 document.querySelector('.login input[name="username"]').value = '{test_user["username"]}';
@@ -366,7 +366,7 @@ class TestLoginPage:
     def test_complete_login_logout_workflow(self):
         """Test complete login and logout workflow."""
         # Login
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         self.login_page.navigate_to_login()
         login_result = self.login_page.login_with_validation(
             test_user["username"], 
@@ -401,7 +401,7 @@ class TestHomePage:
     def test_home_page_loads_after_login(self):
         """Test home page loads successfully after login."""
         # Login first
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         self.login_page.navigate_to_login()
         login_result = self.login_page.login_with_validation(
             test_user["username"], 
@@ -418,7 +418,7 @@ class TestHomePage:
     def test_navigation_menu_visible(self):
         """Test navigation menu is visible after login."""
         # Login first
-        test_user = self.test_data.get_test_user("john")
+        test_user = self.test_data.get_test_user("raisha")
         self.login_page.navigate_to_login()
         login_result = self.login_page.login_with_validation(
             test_user["username"], 

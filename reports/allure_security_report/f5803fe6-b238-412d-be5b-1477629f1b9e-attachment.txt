@@ -1,0 +1,1 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m

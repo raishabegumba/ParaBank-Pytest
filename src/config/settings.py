@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     """Enterprise application settings loaded from environment variables and config files."""
 
     # Application URLs
-    base_url: str = Field(default="https://parabank.parasoft.com/parabank/index.htm?ConnType=JDBC", description="Base application URL")
-    api_base_url: str = Field(default="https://parabank.parasoft.com/parabank/api", description="API base URL")
+    base_url: str = Field(default="http://localhost:8080/parabank", description="Base application URL")
+    api_base_url: str = Field(default="http://localhost:8080/parabank/services/bank", description="API base URL")
     
     # Environment Configuration
     test_env: Environment = Field(default=Environment.DEV, description="Test environment")

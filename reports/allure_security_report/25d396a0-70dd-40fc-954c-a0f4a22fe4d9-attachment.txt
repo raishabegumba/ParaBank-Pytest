@@ -1,0 +1,8 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[31m[1mERROR   [0m | [36msrc.pages.login_page[0m:[36mlogin[0m:[36m220[0m - [31m[1mLogin failed: name 'settings' is not defined[0m
+[33m[1mWARNING [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m212[0m - [33m[1mAttempt 1 failed with NameError: name 'settings' is not defined. Retrying in 0.27 seconds...[0m
+[31m[1mERROR   [0m | [36msrc.pages.login_page[0m:[36mlogin[0m:[36m220[0m - [31m[1mLogin failed: name 'settings' is not defined[0m
+[33m[1mWARNING [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m212[0m - [33m[1mAttempt 2 failed with NameError: name 'settings' is not defined. Retrying in 0.81 seconds...[0m
+[31m[1mERROR   [0m | [36msrc.pages.login_page[0m:[36mlogin[0m:[36m220[0m - [31m[1mLogin failed: name 'settings' is not defined[0m
+[31m[1mERROR   [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m207[0m - [31m[1mException NameError not in retry list, stopping retries[0m
+[31m[1mERROR   [0m | [36msrc.utils.retry_handler[0m:[36mexecute_with_retry[0m:[36m218[0m - [31m[1mAll 3 attempts failed[0m

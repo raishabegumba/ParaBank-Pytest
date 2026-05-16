@@ -144,42 +144,70 @@ class RegistrationPage(BasePage):
         self.click(self.REGISTER_BUTTON)
         log.info("Clicked register button")
 
+    # def is_registration_successful(self) -> bool:
+    #     """Check if registration was successful.
+
+    #     ParaBank typically shows:
+    #     - a success header (#rightPanel h1) when registration completes
+    #     - or a validation/error state (".error" and/or missing required fields)
+
+    #     We only treat registration as successful if we see the expected success
+    #     wording AND no error message is currently visible.
+    #     """
+    #     try:
+    #         # If backend validation failed, an .error element is often present.
+    #         if self.is_visible(self.ERROR_MESSAGE, timeout=1000):
+    #             return False
+
+    #         self.wait_helper.wait_for_element(
+    #             self.SUCCESS_MESSAGE,
+    #             WaitStrategy.ELEMENT_VISIBLE,
+    #             timeout=5000,
+    #         )
+    #         success_text = (self.get_text(self.SUCCESS_MESSAGE) or "").strip().lower()
+
+    #         # Accept the common success header.
+    #         if "signing up is easy" in success_text:
+    #             # Only consider it real success if no error is present.
+    #             return True
+
+    #         # Some builds show a welcome/account created message.
+    #         if "welcome" in success_text and "account" in success_text:
+    #             return True
+
+    #         return False
+    #     except:
+    #         return False
+
+
     def is_registration_successful(self) -> bool:
-        """Check if registration was successful.
-
-        ParaBank typically shows:
-        - a success header (#rightPanel h1) when registration completes
-        - or a validation/error state (".error" and/or missing required fields)
-
-        We only treat registration as successful if we see the expected success
-        wording AND no error message is currently visible.
-        """
+        """Check if registration was successful."""
         try:
-            # If backend validation failed, an .error element is often present.
+            # If error exists, registration failed
             if self.is_visible(self.ERROR_MESSAGE, timeout=1000):
                 return False
 
+        # Wait for success message
             self.wait_helper.wait_for_element(
                 self.SUCCESS_MESSAGE,
                 WaitStrategy.ELEMENT_VISIBLE,
                 timeout=5000,
             )
-            success_text = (self.get_text(self.SUCCESS_MESSAGE) or "").strip().lower()
 
-            # Accept the common success header.
-            if "signing up is easy" in success_text:
-                # Only consider it real success if no error is present.
-                return True
+            success_text = (
+                self.get_text(self.SUCCESS_MESSAGE) or ""
+                ).strip().lower()
 
-            # Some builds show a welcome/account created message.
-            if "welcome" in success_text and "account" in success_text:
-                return True
+            log.info(f"Registration success text: {success_text}")
 
+            # ParaBank success page usually shows:
+            # "Welcome username"
+            return "welcome" in success_text
+
+        except Exception as e:
+            log.error(f"Registration success check failed: {e}")
             return False
-        except:
-            return False
-
-
+    
     def get_success_message(self) -> str:
         """Get success message after registration."""
         try:
@@ -417,7 +445,11 @@ class RegistrationPage(BasePage):
             constraints['ssn_valid'] = len(ssn_digits) == 9
             
             # Username length validation
-            username = self.get_attribute(self.USERNAME_FIELD, "value") or ""
+            # username = self.get_attribute(self.USERNAME_FIELD, "value") or ""
+            username = self.get_attribute(self.USERNAME_FIELD, "value")
+            if username is None:
+                username = self.page.locator(self.USERNAME_FIELD).input_value()
+            username = username or ""
             # Tests expect min 3 chars and max 50 chars.
             constraints['username_length_valid'] = 3 <= len(username) <= 50
             

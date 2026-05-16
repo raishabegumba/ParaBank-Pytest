@@ -1,0 +1,4 @@
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/customers/12212/accounts - Status: 200[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/accounts/12345/transactions/month/January/type/Credit - Status: 200[0m
+[1mINFO    [0m | [36mtests.api.test_api[0m:[36mtest_get_transactions_by_month_and_type[0m:[36m342[0m - [1mGet transactions by month and type test passed[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mclose_session[0m:[36m110[0m - [1mAPI session closed[0m

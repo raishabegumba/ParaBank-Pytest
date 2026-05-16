@@ -67,28 +67,47 @@ class BasePage:
             self.log.error(f"Failed to fill text in element: {selector}. Error: {e}")
             raise
 
+    # def get_text(self, selector: str) -> str:
+    #     """Get text from element."""
+    #     try:
+    #         locator = self.page.locator(selector)
+    #         text = locator.text_content()
+    #         self.log.info(f"Retrieved text '{text}' from element: {selector}")
+    #         return text
+    #     except Exception as e:
+    #         self.log.error(f"Failed to get text from element: {selector}. Error: {e}")
+    #         raise
+
     def get_text(self, selector: str) -> str:
         """Get text from element."""
         try:
             locator = self.page.locator(selector)
-            text = locator.text_content()
+            locator.wait_for(state="attached", timeout=5000)
+            text = locator.text_content() or ""
             self.log.info(f"Retrieved text '{text}' from element: {selector}")
-            return text
+            return text.strip()
         except Exception as e:
             self.log.error(f"Failed to get text from element: {selector}. Error: {e}")
-            raise
+            return ""
+
 
     def is_visible(self, selector: str, timeout: int = 10000) -> bool:
         """Check if element is visible."""
         try:
             locator = self.page.locator(selector)
-            locator.is_visible(timeout=timeout)
-            self.log.info(f"Element is visible: {selector}")
-            return True
+            locator.wait_for(state="visible", timeout=timeout)
+            visible = locator.is_visible()
+
+            if visible:
+                self.log.info(f"Element is visible: {selector}")
+            else:
+                self.log.warning(f"Element is not visible: {selector}")
+            return visible
+
         except Exception:
             self.log.warning(f"Element is not visible: {selector}")
             return False
-
+        
     def is_enabled(self, selector: str) -> bool:
         """Check if element is enabled."""
         try:

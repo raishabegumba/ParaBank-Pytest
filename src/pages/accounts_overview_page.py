@@ -158,6 +158,11 @@ class AccountsOverviewPage(BasePage):
         self.wait_helper.wait_for_and_click(self.LOGOUT_BUTTON)
         log.info("Clicked Logout button")
 
+    def logout(self) -> None:
+        """Logout from application."""
+        self.click_logout()
+        log.info("User logged out successfully")
+
     def is_accounts_table_visible(self) -> bool:
         """Check if accounts table is visible."""
         return self.is_visible(self.ACCOUNTS_TABLE)
@@ -371,3 +376,13 @@ class AccountsOverviewPage(BasePage):
         except Exception as e:
             log.error(f"Failed to export accounts data: {e}")
             return {}
+
+    def verify_page_loaded(self) -> bool:
+        """Verify that the accounts overview page is loaded."""
+        try:
+            return self.is_visible(self.ACCOUNTS_TABLE, timeout=5000) and \
+                   ("overview.htm" in self.page.url or "Accounts Overview" in self.page.title())
+        except Exception:
+            return False
+
+  

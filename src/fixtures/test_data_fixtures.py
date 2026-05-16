@@ -23,54 +23,61 @@ def user_test_data(fake_data: Faker) -> Dict[str, Any]:
 
     """
     User test data fixture.
-    
-    Args:
-        fake_data: Faker instance
-        
-    Returns:
-        Dictionary with user test data
+
+    Note: Some tests import `user_test_data` as a plain variable rather than using pytest injection.
+    To prevent `TypeError: 'function' object is not subscriptable`, we also expose a module-level
+    dict named `user_test_data_data` and keep this fixture returning that dict.
     """
-    return {
-        'valid_user': {
-            'username': 'john.doe',
-            'password': 'Password123!',
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'address': '123 Main Street',
-            'city': 'New York',
-            'state': 'NY',
-            'zip_code': '10001',
-            'phone': '555-123-4567',
-            'ssn': '123-45-6789'
-        },
-        'invalid_user': {
-            'username': 'invalid.user',
-            'password': 'WrongPassword123!',
-            'first_name': 'Invalid',
-            'last_name': 'User',
-            'address': '456 Invalid Street',
-            'city': 'Invalid City',
-            'state': 'XX',
-            'zip_code': '00000',
-            'phone': '000-000-0000',
-            'ssn': '000-00-0000'
-        },
-        'random_users': [
-            {
-                'username': fake_data.user_name(),
-                'password': fake_data.password(length=12, special_chars=True, digits=True, upper_case=True, lower_case=True),
-                'first_name': fake_data.first_name(),
-                'last_name': fake_data.last_name(),
-                'address': fake_data.street_address(),
-                'city': fake_data.city(),
-                'state': fake_data.state_abbr(),
-                'zip_code': fake_data.zipcode(),
-                'phone': fake_data.phone_number(),
-                'ssn': fake_data.ssn()
-            }
-            for _ in range(5)
-        ]
-    }
+    return user_test_data_data
+
+
+# Module-level dict for tests that import `user_test_data` directly.
+# Use a local Faker instance here — the `fake_data` name above is a pytest
+# fixture function at module scope and cannot be called like Faker().
+_faker = Faker()
+
+user_test_data_data: Dict[str, Any] = {
+    'valid_user': {
+        'username': 'john.doe',
+        'password': 'Password123!',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'address': '123 Main Street',
+        'city': 'New York',
+        'state': 'NY',
+        'zip_code': '10001',
+        'phone': '555-123-4567',
+        'ssn': '123-45-6789'
+    },
+    'invalid_user': {
+        'username': 'invalid.user',
+        'password': 'WrongPassword123!',
+        'first_name': 'Invalid',
+        'last_name': 'User',
+        'address': '456 Invalid Street',
+        'city': 'Invalid City',
+        'state': 'XX',
+        'zip_code': '00000',
+        'phone': '000-000-0000',
+        'ssn': '000-00-0000'
+    },
+    'random_users': [
+        {
+            'username': _faker.user_name(),
+            'password': _faker.password(length=12, special_chars=True, digits=True, upper_case=True, lower_case=True),
+            'first_name': _faker.first_name(),
+            'last_name': _faker.last_name(),
+            'address': _faker.street_address(),
+            'city': _faker.city(),
+            'state': _faker.state_abbr(),
+            'zip_code': _faker.zipcode(),
+            'phone': _faker.phone_number(),
+            'ssn': _faker.ssn()
+        }
+        for _ in range(5)
+    ]
+}
+
 
 
 @pytest.fixture(scope="session")

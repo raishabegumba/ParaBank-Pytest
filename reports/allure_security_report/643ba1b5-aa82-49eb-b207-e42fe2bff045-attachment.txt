@@ -1,0 +1,12 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mcreate_screenshots_directory[0m:[36m55[0m - [1mScreenshots directory ready: reports\screenshots[0m
+[33m[1mWARNING [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser[0m:[36m26[0m - [33m[1mUnknown browser chromium, defaulting to chromium[0m
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser[0m:[36m29[0m - [1mPlaywright chromium browser initialized[0m
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='username'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_username[0m:[36m101[0m - [1mEntered username: <script>alert('XSS')</script>[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='password'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_password[0m:[36m119[0m - [1mEntered password[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[type='submit'][value='Log In'] found with strategy clickable[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mclick[0m:[36m55[0m - [1mClicked element: .login input[type='submit'][value='Log In'][0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mclick_login[0m:[36m132[0m - [1mClicked login button[0m
+[1mINFO    [0m | [36mtests.security.test_security[0m:[36mtest_xss_login_username[0m:[36m58[0m - [1mXSS prevention verified in login[0m

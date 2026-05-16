@@ -20,7 +20,7 @@ from src.config.logger import log
 def test_environment():
     """Get test environment configuration."""
     return {
-        'base_url': os.getenv('PARABANK_BASE_URL', 'https://parabank.parasoft.com/parabank/index.htm?ConnType=JDBC'),
+        'base_url': os.getenv('PARABANK_BASE_URL', 'http://localhost:8080/parabank'),
         'timeout': int(os.getenv('TEST_TIMEOUT', '30000')),
         'headless': os.getenv('HEADLESS', 'true').lower() == 'true',
         'slow_mo': int(os.getenv('SLOW_MO', '0')),
@@ -156,7 +156,7 @@ def test_data():
 def authenticated_user(page: Page, login_page: LoginPage, test_data: TestDataUtils):
     """Provide authenticated user session for tests."""
     # Get test user credentials
-    test_user = test_data.get_test_user("john")
+    test_user = test_data.get_test_user("raisha")
     
     # Perform login
     login_page.navigate_to_login()

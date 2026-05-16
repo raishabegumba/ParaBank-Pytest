@@ -101,25 +101,25 @@ def _status_badge(status: str) -> str:
 
 
 def generate_html(results: List[TestResult], output_path: Path, reports_dir: Path) -> str:
-    results = [r for r in results if normalize_status(r.status) == "passed"]
+#     results = [r for r in results if normalize_status(r.status) == "passed"]
     total = len(results)
-    counts = {
-    "passed": total,
-    "failed": 0,
-    "skipped": 0,
-    "unknown": 0
-   }
-    # counts = {"passed": 0, "failed": 0, "skipped": 0, "unknown": 0}
-    # for r in results:
-    #     s = normalize_status(r.status)
-    #     if s == "passed":
-    #         counts["passed"] += 1
-    #     elif s == "failed":
-    #         counts["failed"] += 1
-    #     elif s in {"skipped", "skip"}:
-    #         counts["skipped"] += 1
-    #     else:
-    #         counts["unknown"] += 1
+#     counts = {
+#     "passed": total,
+#     "failed": 0,
+#     "skipped": 0,
+#     "unknown": 0
+#    }
+    counts = {"passed": 0, "failed": 0, "skipped": 0, "unknown": 0}
+    for r in results:
+        s = normalize_status(r.status)
+        if s == "passed":
+            counts["passed"] += 1
+        elif s == "failed":
+            counts["failed"] += 1
+        elif s in {"skipped", "skip"}:
+            counts["skipped"] += 1
+        else:
+            counts["unknown"] += 1
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

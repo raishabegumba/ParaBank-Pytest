@@ -1,0 +1,403 @@
+"""Comprehensive login page tests covering all scenarios."""
+import pytest
+from datetime import datetime
+from playwright.sync_api import Page
+from src.pages.login_page import LoginPage
+from src.config.settings import get_settings
+from src.config.logger import log
+
+# FIX: security_test_data and boundary_test_data are module-level dicts (not fixtures),
+#      so they are imported directly. user_test_data IS a fixture — do NOT import it here;
+#      receive it as a method parameter instead.
+from src.fixtures.test_data_fixtures import security_test_data, boundary_test_data
+
+
+@pytest.mark.ui
+@pytest.mark.login
+@pytest.mark.smoke
+class TestLoginComprehensive:
+    """Comprehensive login page test suite."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, page: Page):
+        """Setup test instance."""
+        self.login_page = LoginPage(page)
+        self.login_page.navigate_to_login()
+
+    @pytest.mark.positive
+    def test_valid_login(self, user_test_data):
+        """Test login with valid credentials."""
+        # FIX: user_test_data received as fixture parameter (not imported at module level)
+        valid_user = user_test_data['valid_user']
+
+        self.login_page.login(valid_user['username'], valid_user['password'])
+
+        self.login_page.assert_login_successful()
+        assert self.login_page.is_login_successful()
+
+        log.info("Valid login test passed")
+
+    @pytest.mark.negative
+    @pytest.mark.parametrize("username,password,expected_error", [
+        ("invalid", "password", "The username and password could not be verified"),
+        ("", "password", "Please enter a username and password"),
+        ("testuser", "", "Please enter a username and password"),
+        ("", "", "Please enter a username and password"),
+        ("nonexistent", "wrongpass", "The username and password could not be verified"),
+        ("testuser", "wrongpassword", "The username and password could not be verified"),
+    ])
+    def test_invalid_login_scenarios(self, username, password, expected_error):
+        """Test various invalid login scenarios."""
+        self.login_page.login(username, password)
+
+        self.login_page.assert_login_failed(expected_error)
+        assert not self.login_page.is_login_successful()
+
+        log.info(f"Invalid login test passed for: {username}")
+
+    @pytest.mark.negative
+    @pytest.mark.security
+    @pytest.mark.parametrize("malicious_input,safe_id", [
+        ('<script>alert("XSS")</script>',        "xss_script_tag"),
+        ('"><script>alert("XSS")</script>',      "xss_attr_break"),
+        ('<img src=x onerror=alert("XSS")>',     "xss_img_onerror"),
+        ('javascript:alert("XSS")',               "xss_javascript_proto"),
+        ('<svg onload=alert("XSS")>',             "xss_svg_onload"),
+    ])
+    def test_login_xss_protection(self, malicious_input, safe_id):
+        """
+        Test login page XSS protection.
+        FIX: Added safe_id param so conftest JSON report filename never contains
+             invalid Windows chars (<, >, ", etc.) — was causing OSError on teardown.
+        """
+        self.login_page.login(malicious_input, "password123")
+
+        page_content = self.login_page.page.content()
+        assert "<script>" not in page_content.lower(), (
+            f"XSS vulnerability detected for: {safe_id}"
+        )
+
+        log.info(f"XSS protection test passed for: {safe_id}")
+
+    @pytest.mark.negative
+    @pytest.mark.security
+    @pytest.mark.parametrize("sql_payload,safe_id", [
+        ("' OR '1'='1",                  "sql_or_true"),
+        ("' OR 1=1--",                   "sql_or_1_comment"),
+        ("'; DROP TABLE users;--",       "sql_drop_table"),
+        ("' UNION SELECT * FROM users--","sql_union_select"),
+        ("admin'--",                     "sql_admin_comment"),
+    ])
+    def test_login_sql_injection_protection(self, sql_payload, safe_id):
+        """
+        Test login page SQL injection protection.
+        FIX: Added safe_id param so conftest JSON report filename never contains
+             invalid Windows chars (',  spaces, etc.) — was causing OSError on teardown.
+        """
+        self.login_page.login(sql_payload, "password123")
+
+        assert not self.login_page.is_login_successful(), (
+            f"SQL injection should not authenticate: {safe_id}"
+        )
+
+        log.info(f"SQL injection protection test passed for: {safe_id}")
+
+    @pytest.mark.accessibility
+    def test_login_page_accessibility(self):
+        """Test login page accessibility features."""
+        accessibility_results = self.login_page.validate_login_form_accessibility()
+
+        assert accessibility_results['username_has_label'], "Username field should have label"
+        assert accessibility_results['password_has_label'], "Password field should have label"
+        assert accessibility_results['login_button_has_text'], "Login button should have text"
+        assert accessibility_results['form_is_keyboard_accessible'], "Form should be keyboard accessible"
+
+        log.info("Accessibility test passed")
+
+    @pytest.mark.ui
+    def test_login_page_elements_visibility(self):
+        """Test all login page elements are visible."""
+        self.login_page.assert_login_page_loaded()
+
+        assert self.login_page.is_forgot_password_link_visible()
+        assert self.login_page.is_register_link_visible()
+        assert self.login_page.is_username_field_enabled()
+        assert self.login_page.is_password_field_enabled()
+        assert self.login_page.is_login_button_enabled()
+
+        log.info("Page elements visibility test passed")
+
+    @pytest.mark.boundary
+    @pytest.mark.parametrize("username,safe_id", [
+        ("!", "special_exclaim"), ("@", "special_at"), ("#", "special_hash"),
+        ("$", "special_dollar"), ("%", "special_percent"), ("^", "special_caret"),
+        ("&", "special_amp"), ("*", "special_star"), ("(", "special_lparen"),
+        (")", "special_rparen"), ("_", "special_underscore"), ("+", "special_plus"),
+        ("-", "special_dash"), ("=", "special_eq"), ("[", "special_lbracket"),
+        ("]", "special_rbracket"), ("{", "special_lbrace"), ("}", "special_rbrace"),
+        ("|", "special_pipe"), (";", "special_semi"), (":", "special_colon"),
+        (",", "special_comma"), (".", "special_dot"), ("<", "special_lt"),
+        (">", "special_gt"), ("?", "special_question"),
+    ])
+    def test_username_special_characters(self, username, safe_id):
+        """
+        Test username field with special characters.
+        FIX: Added safe_id param — chars like *, |, <, >, ? are invalid in Windows
+             filenames and were causing OSError in conftest JSON report teardown.
+        """
+        self.login_page.login(username, "Password123!")
+
+        error_message = self.login_page.get_error_message()
+        assert len(error_message) > 0 or self.login_page.is_login_successful(), (
+            f"Should produce error or success for: {safe_id}"
+        )
+
+        log.info(f"Special characters test passed for: {safe_id}")
+
+    @pytest.mark.performance
+    def test_login_performance(self, user_test_data):
+        """
+        Test login performance.
+        FIX: 'performance_metrics' fixture doesn't exist in conftest — replaced with
+             datetime timing, which matches the approach in test_login.py.
+        """
+        # FIX: user_test_data received as fixture parameter
+        valid_user = user_test_data['valid_user']
+
+        start_time = datetime.now()
+        self.login_page.login(valid_user['username'], valid_user['password'])
+        login_complete = self.login_page.wait_for_login_complete(timeout=5000)
+        login_duration = (datetime.now() - start_time).total_seconds()
+
+        assert login_complete, "Login should complete within timeout"
+        assert login_duration < 3.0, (
+            f"Login took {login_duration:.2f}s, should be under 3s"
+        )
+
+        log.info(f"Login performance test passed: {login_duration:.2f}s")
+
+    @pytest.mark.ui
+    def test_password_field_masking(self):
+        """Test password field is properly masked."""
+        assert self.login_page.is_password_field_masked(), "Password field should be masked"
+
+        log.info("Password field masking test passed")
+
+    @pytest.mark.ui
+    def test_login_form_validation(self):
+        """Test login form validation states."""
+        self.login_page.clear_login_form()
+        form_state = self.login_page.get_form_validation_state()
+
+        assert form_state['username_empty'], "Username should be empty"
+        assert form_state['password_empty'], "Password should be empty"
+        assert form_state['form_visible'], "Form should be visible"
+
+        log.info("Form validation test passed")
+
+    @pytest.mark.ui
+    def test_enter_key_submission(self):
+        """Test login submission with Enter key."""
+        self.login_page.enter_username("john.doe")
+        self.login_page.enter_password("Password123!")
+
+        self.login_page.press_enter_in_password_field()
+
+        login_complete = self.login_page.wait_for_login_complete()
+        assert login_complete, "Login should complete with Enter key"
+
+        log.info("Enter key submission test passed")
+
+    @pytest.mark.regression
+    def test_login_with_retry_mechanism(self, user_test_data):
+        """
+        Test login with retry mechanism.
+        FIX: user_test_data received as fixture parameter instead of being
+             used as a module-level import — was causing TypeError: 'function'
+             object is not subscriptable.
+        """
+        # FIX: user_test_data received as fixture parameter
+        valid_user = user_test_data['valid_user']
+
+        login_result = self.login_page.login_with_validation(
+            valid_user['username'],
+            valid_user['password']
+        )
+
+        assert login_result['success'], (
+            f"Login should succeed: {login_result.get('error_message')}"
+        )
+        assert 'welcome_message' in login_result, "Should have welcome message"
+
+        log.info("Login with retry mechanism test passed")
+
+    @pytest.mark.ui
+    def test_navigation_links(self):
+        """
+        Test navigation links functionality.
+        FIX: "forgotpassword" → "lookup" — confirmed by log that actual URL
+             is /parabank/lookup.htm, not /forgotpassword.
+        FIX: navigate_to_login() used instead of self.login_page.goto(...) for
+             reliable back-navigation with element assertions.
+        """
+        # Test forgot password link
+        self.login_page.click_forgot_password()
+        current_url = self.login_page.get_url()
+        # FIX: was "forgotpassword" — actual URL is /parabank/lookup.htm
+        assert "lookup" in current_url.lower(), (
+            f"Should navigate to forgot password page, got: {current_url}"
+        )
+
+        # Navigate back to login
+        self.login_page.navigate_to_login()
+
+        # Test register link
+        self.login_page.click_register()
+        current_url = self.login_page.get_url()
+        assert "register" in current_url.lower(), (
+            f"Should navigate to register page, got: {current_url}"
+        )
+
+        log.info("Navigation links test passed")
+
+    @pytest.mark.boundary
+    def test_login_field_boundaries(self):
+        """
+        Test login field boundary conditions.
+        FIX: 'boundary_test_data' fixture doesn't exist in conftest — removed
+             fixture parameter, using inline long string instead (same intent).
+        """
+        long_username = "a" * 300
+        self.login_page.login(long_username, "Password123!")
+
+        page_content = self.login_page.page.content()
+        assert len(page_content) > 0, "Page should load without crashing"
+
+        log.info("Login field boundaries test passed")
+
+    @pytest.mark.ui
+    def test_welcome_message_content(self, user_test_data):
+        """
+        Test welcome message content after successful login.
+        FIX: user_test_data received as fixture parameter (was module-level import).
+        FIX: Removed assert username in welcome_message — welcome shows first+last
+             name (e.g. 'Welcome Raisha BA'), not the username ('raisha').
+        """
+        # FIX: user_test_data received as fixture parameter
+        valid_user = user_test_data['valid_user']
+
+        self.login_page.login(valid_user['username'], valid_user['password'])
+
+        welcome_message = self.login_page.get_welcome_message()
+        assert len(welcome_message) > 0, "Welcome message should not be empty"
+        assert "Welcome" in welcome_message, (
+            f"Should contain 'Welcome', got: '{welcome_message}'"
+        )
+
+        log.info("Welcome message content test passed")
+
+    @pytest.mark.ui
+    def test_login_button_state(self):
+        """Test login button state changes."""
+        assert self.login_page.is_login_button_enabled(), "Login button should be enabled"
+
+        button_text = self.login_page.get_login_button_text()
+        assert "log in" in button_text.lower(), "Button should have Login text"
+
+        log.info("Login button state test passed")
+
+
+@pytest.mark.ui
+@pytest.mark.login
+@pytest.mark.smoke
+@pytest.mark.parallel
+class TestLoginParallel:
+    """Parallel login tests for performance testing."""
+
+    def test_parallel_login_performance(self, page: Page, user_test_data):
+        """
+        Test login performance under parallel execution.
+        FIX: 'performance_metrics' fixture doesn't exist — replaced with datetime.
+             user_test_data received as fixture parameter for valid credentials.
+        """
+        login_page = LoginPage(page)
+        login_page.navigate_to_login()
+
+        start_time = datetime.now()
+        login_page.login(
+            user_test_data['valid_user']['username'],
+            user_test_data['valid_user']['password']
+        )
+        login_complete = login_page.wait_for_login_complete()
+        duration = (datetime.now() - start_time).total_seconds()
+
+        assert login_complete, "Parallel login should complete"
+        assert duration < 10.0, (
+            f"Parallel login took {duration:.2f}s, should be under 10s"
+        )
+
+        log.info(f"Parallel login performance test passed: {duration:.2f}s")
+
+
+@pytest.mark.ui
+@pytest.mark.login
+@pytest.mark.mobile
+class TestLoginMobile:
+    """
+    Mobile-specific login tests.
+    NOTE: 'mobile_page' fixture is not yet defined in conftest.py.
+    To enable this test, add to conftest.py:
+
+        @pytest.fixture
+        def mobile_page(browser):
+            context = browser.new_context(viewport={"width": 375, "height": 667})
+            page = context.new_page()
+            yield page
+            context.close()
+    """
+
+    def test_mobile_login_responsive(self, mobile_page: Page):
+        """Test login on mobile viewport."""
+        login_page = LoginPage(mobile_page)
+        login_page.navigate_to_login()
+
+        login_page.login("john.doe", "Password123!")
+
+        assert login_page.is_login_successful(), "Mobile login should work"
+
+        log.info("Mobile login test passed")
+
+
+
+
+
+
+Move to test_login.py (core smoke)
+test_valid_login
+test_invalid_login_scenarios (if exists there too)
+test_login_with_retry_mechanism
+test_enter_key_submission
+test_login_button_state
+🔁 Move to test_login_ui.py
+test_login_page_elements_visibility
+test_login_form_validation
+test_password_field_masking
+test_login_page_accessibility
+test_navigation_links
+🔁 Move to test_login_security.py
+test_login_xss_protection
+test_login_sql_injection_protection
+🔁 Move to test_login_edge.py
+test_login_with_very_long_credentials
+test_login_with_special_characters
+test_login_field_boundaries
+🔁 Move to test_login_performance.py
+test_login_performance
+test_parallel_login_performance
+🔁 Move to test_login_mobile.py
+TestLoginMobile
+🔁 Move to test_login_integration.py
+test_complete_login_logout_workflow (if you had it here)
+
+
+

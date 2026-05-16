@@ -1,92 +1,129 @@
-You are an expert software engineer. Analyze the failing test cases and fix the implementation with the smallest safe change possible.
-Requirements:
+You are an expert software engineer. 
 
+Analyze UI automation test failures using JSON artifacts located in:
 
-First identify the root cause of each failing test.
+reports/html/test_report_*.json
 
+Each JSON file has the following structure:
 
-Do not modify tests unless they are clearly incorrect.
+{
+  "test_name": "",
+  "test_file": "",
+  "status": "passed | failed | skipped | unknown",
+  "duration": 0.0,
+  "error_message": "",
+  "start_time": "",
+  "end_time": "",
+  "metadata": {
+    "markers": [],
+    "node_id": ""
+  }
+}
+Objective
 
+Fix failing UI automation test cases by analyzing the JSON failure reports and updating only the relevant test/module code.
 
-Preserve existing functionality and passing tests.
+Tasks
+1. Identify Failed Tests
 
+Scan all JSON files and process only:
 
-Follow the current project’s coding style and architecture.
+status = "failed"
 
+Ignore passed/skipped tests.
 
-Avoid unnecessary refactoring.
+2. Extract Failure Details
 
+For each failed test:
 
-Add edge-case handling if required by the failing tests.
+Identify:
+test_name
+test_file
+metadata.node_id
+failing line from stack trace
+assertion or exception message
+Read the corresponding Python test file.
+Trace related:
+Page Object methods
+utility/helper methods
+fixtures
+navigation/login helpers
+3. Classify Root Cause
 
+Classify failures into one of these categories:
 
-The application requirement document "ParaBank Enterprise QA-updated.docx" or project-requirement is available within the project folder structure. Review it before making changes to ensure the implementation matches the expected behavior and business requirements.
+Login/authentication failure
+Locator issue (element changed/not found)
+Assertion mismatch
+Timing/synchronization issue
+Data/setup issue
+Framework/Page Object issue
+Environment/session issue
+Important Failure Pattern
 
+If the error contains:
 
-Use the requirement document to validate assumptions before fixing the code.
+assert login_result['success'], "Login should be successful"
+E assert False
 
+Treat it as a shared login/navigation framework issue.
 
-After applying the fix, explain:
+Investigate:
 
+login helper methods
+credential loading
+session persistence
+redirects/navigation
+waits after login
+page load synchronization
+stale locators after login
+unexpected logout/session expiry
 
-What was broken
+Fix the shared root cause instead of patching individual tests.
 
+Fix Requirements
 
-Why the tests failed
+For each failed test:
 
+Explain root cause
+Apply minimal targeted fix
+Preserve existing framework structure
+Reuse existing utilities/helpers
+Avoid duplicate code
+Improve waits/synchronization where necessary
+Prefer robust Playwright/Pytest patterns
+Expected Output Format
 
-What code was changed
+For each fix provide:
 
+Test Name:
+File:
+Root Cause:
+Fix Applied:
+Files Modified:
+Recommendation:
 
-Why the fix works
+Then provide the actual code changes.
 
+Constraints
+Do NOT modify passing tests
+Do NOT rewrite unrelated modules
+Do NOT hardcode sleeps unless unavoidable
+Prefer explicit waits over time.sleep()
+Keep Page Object Model architecture intact
+Keep fixes production-quality and maintainable
+Execution Order
+Summarize all failed tests
+Group similar failures together
+Fix shared framework/login issues first
+Then fix module-specific failures
+Finally identify flaky tests and stabilization improvements
+Additional Guidance
 
+When handling Playwright failures:
 
-
-Process:
-
-
-Read the error output carefully
-
-
-Inspect the requirement document in the folder structure
-
-
-Inspect related source files
-
-
-Determine the minimal fix
-
-
-Implement the fix
-
-
-Re-run tests mentally / logically to ensure no regressions
-
-
-Output format:
-
-
-Root cause analysis
-
-
-Requirement document findings
-
-
-Files changed
-
-
-Code diff or updated code
-
-
-Explanation of fix
-
-
-Any remaining risks or assumptions
-
-
-Here are the failing test cases and logs:
-[PASTE TEST OUTPUT HERE]
-Relevant source code:
-// PASTE SOURCE CODE HERE
-
+Use explicit waits
+Avoid unstable nth() chains where possible
+Reuse locators instead of repeatedly querying DOM
+Validate page state before assertions
+Prefer .inner_text() over unstable .text_content() where appropriate

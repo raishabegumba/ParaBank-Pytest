@@ -1,0 +1,5 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mis_visible[0m:[36m102[0m - [1mElement is visible: .login input[name='username'][0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mis_visible[0m:[36m102[0m - [1mElement is visible: .login input[name='password'][0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mis_visible[0m:[36m102[0m - [1mElement is visible: .login input[type='submit'][value='Log In'][0m
+[1mINFO    [0m | [36mtests.security.test_security[0m:[36mtest_prevent_unauthorized_access[0m:[36m220[0m - [1mUnauthorized access prevented[0m

@@ -1,0 +1,2 @@
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/api/customers/12212 - Status: 404[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mclose_session[0m:[36m110[0m - [1mAPI session closed[0m

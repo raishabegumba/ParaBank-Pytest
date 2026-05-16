@@ -1,0 +1,5 @@
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/customers/12212/accounts - Status: 200[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/accounts/12345/transactions - Status: 200[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/transactions/12145 - Status: 200[0m
+[1mINFO    [0m | [36mtests.api.test_api[0m:[36mtest_get_transaction_by_id[0m:[36m414[0m - [1mGet transaction by id passed: 12145[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mclose_session[0m:[36m110[0m - [1mAPI session closed[0m

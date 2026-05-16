@@ -1,0 +1,3 @@
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mget[0m:[36m36[0m - [1mGET http://localhost:8080/parabank/services/bank/login/john/demo - Status: 200[0m
+[1mINFO    [0m | [36mtests.api.test_api[0m:[36mtest_login_valid_credentials[0m:[36m70[0m - [1mLogin API returned customer id: 12212[0m
+[1mINFO    [0m | [36msrc.api.base_api[0m:[36mclose_session[0m:[36m110[0m - [1mAPI session closed[0m
