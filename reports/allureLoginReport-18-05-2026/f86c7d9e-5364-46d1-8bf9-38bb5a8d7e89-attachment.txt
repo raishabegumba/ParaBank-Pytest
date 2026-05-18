@@ -1,0 +1,15 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m211[0m - [1mStarting test: test_xss_protection[<script>alert(1)</script>-xss_script][0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mgoto[0m:[36m22[0m - [1mNavigated to http://localhost:8080/parabank[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement .login input[name='username'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement .login input[name='password'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mnavigate_to_login[0m:[36m48[0m - [1mSuccessfully navigated to login page[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='username'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_username[0m:[36m101[0m - [1mEntered username: <script>alert(1)</script>[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='password'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_password[0m:[36m119[0m - [1mEntered password[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[type='submit'][value='Log In'] found with strategy clickable[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mclick[0m:[36m55[0m - [1mClicked element: .login input[type='submit'][value='Log In'][0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mclick_login[0m:[36m132[0m - [1mClicked login button[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mlogin[0m:[36m219[0m - [1mLogin attempted for user: <script>alert(1)</script>[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m227[0m - [1mCompleted test: test_xss_protection[<script>alert(1)</script>-xss_script][0m

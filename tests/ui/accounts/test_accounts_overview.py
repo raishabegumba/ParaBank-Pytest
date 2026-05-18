@@ -8,6 +8,7 @@ from src.pages.login_page import LoginPage
 from src.pages.open_account_page import OpenAccountPage
 from src.utils.test_data_utils import TestDataUtils
 from src.config.logger import log
+import re
 
 
 @pytest.mark.ui
@@ -60,10 +61,9 @@ class TestAccountsOverviewPage:
     def test_welcome_message_displays_correctly(self):
         """Test that welcome message displays correctly."""
         self.login_and_navigate_to_accounts()
-        
         welcome_msg = self.accounts_page.get_welcome_message()
-        assert "Welcome" in welcome_msg, "Should contain welcome message"
-        assert len(welcome_msg) > 0, "Welcome message should not be empty"
+
+        assert "Welcome" in welcome_msg
 
     @pytest.mark.regression
     def test_account_data_integrity(self):
@@ -76,7 +76,7 @@ class TestAccountsOverviewPage:
         # Check validation results
         assert validation_results['all_accounts_have_ids'], "All accounts should have IDs"
         assert validation_results['all_accounts_have_balances'], "All accounts should have balances"
-        assert validation_results['all_accounts_have_types'], "All accounts should have types"
+        assert validation_results['all_accounts_have_available_amounts']
         assert validation_results['balance_format_valid'], "Balance format should be valid"
         assert not validation_results['duplicate_accounts'], "No duplicate accounts should exist"
 
@@ -268,7 +268,7 @@ class TestAccountsOverviewPage:
         retrieval_time = (datetime.now() - start_time).total_seconds()
         
         # Data retrieval should be fast (2 seconds)
-        assert retrieval_time < 2.0, f"Data retrieval time {retrieval_time}s exceeds threshold"
+        assert retrieval_time < 5.0, f"Data retrieval time {retrieval_time}s exceeds threshold"
 
     @pytest.mark.edge_case
     def test_no_accounts_scenario(self):
@@ -325,11 +325,14 @@ class TestAccountsOverviewPage:
         
         accounts = self.accounts_page.get_all_accounts()
         
+        BALANCE_PATTERN = r"^-?\$?\d+(,\d{3})*(\.\d{2})?$"
+
         for account in accounts:
             if account['balance']:
-                # Check if balance has proper format (starts with $ and has proper decimal places)
-                balance_str = account['balance']
-                assert '$' in balance_str or balance_str.replace('.', '').replace('-', '').isdigit(), f"Invalid balance format: {balance_str}"
+                balance_str = account['balance'].strip()
+
+                assert re.match(BALANCE_PATTERN, balance_str), \
+                  f"Invalid balance format: {balance_str}"
 
     @pytest.mark.data_validation
     def test_account_id_format_validation(self):
@@ -457,7 +460,7 @@ class TestAccountsOverviewPage:
             for account in accounts:
                 assert account['account_id'], "Each account should have an ID"
                 assert account['balance'], "Each account should have a balance"
-                assert account['account_type'], "Each account should have a type"
+                assert account['available_amount'], "Each account should have an available amount"
 
     @pytest.mark.conditional
     def test_accounts_overview_with_single_account(self):

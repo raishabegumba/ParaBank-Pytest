@@ -16,13 +16,13 @@ class AccountsOverviewPage(BasePage):
     ACCOUNT_ROWS = "#accountTable tbody tr"
     ACCOUNT_LINKS = "#accountTable tbody tr td:nth-child(1) a"
     BALANCE_VALUES = "#accountTable tbody tr td:nth-child(2)"
-    ACCOUNT_TYPES = "#accountTable tbody tr td:nth-child(3)"
+    AVAILABLE_AMOUNT_VALUES = "#accountTable tbody tr td:nth-child(3)"
     OPEN_NEW_ACCOUNT_BUTTON = "a[href*='openaccount.htm']"
     TRANSFER_FUNDS_BUTTON = "a[href*='transfer.htm']"
     BILL_PAY_BUTTON = "a[href*='billpay.htm']"
     FIND_TRANSACTIONS_BUTTON = "a[href*='findtrans.htm']"
     LOGOUT_BUTTON = "a[href*='logout.htm']"
-    WELCOME_MESSAGE = "#rightPanel h1:has-text('Accounts Overview')"
+    WELCOME_MESSAGE = "#leftPanel p b"
     TOTAL_BALANCE = "#accountTable tfoot tr td:nth-child(2)"
     NO_ACCOUNTS_MESSAGE = "#accountTable tbody tr td"
     ACCOUNT_DETAILS_HEADER = "#accountDetails h1"
@@ -53,28 +53,33 @@ class AccountsOverviewPage(BasePage):
         
         try:
             # Wait for table to be visible
-            self.wait_helper.wait_for_element(self.ACCOUNT_ROWS, WaitStrategy.ELEMENT_VISIBLE)
+            self.page.locator(self.ACCOUNT_ROWS).first.wait_for(state="visible", timeout=10000)
             
             # Get all account rows
             rows = self.find_elements(self.ACCOUNT_ROWS)
             
             for i, row in enumerate(rows):
                 try:
-                    # Extract account details from each row
-                    account_id = row.locator("td:nth-child(1) a").text_content()
-                    balance = row.locator("td:nth-child(2)").text_content()
-                    account_type = row.locator("td:nth-child(3)").text_content()
-                    
+                    # Skip rows without an account link (e.g. total row)
+                    account_link = row.locator("td:nth-child(1) a")
+                    if account_link.count() == 0:
+                        continue
+
+                    account_id = account_link.text_content(timeout=5000)
+                    balance = row.locator("td:nth-child(2)").text_content(timeout=5000)
+                    available_amount = row.locator("td:nth-child(3)").text_content(timeout=5000)
+
                     accounts.append({
-                        'account_id': account_id.strip() if account_id else "",
-                        'balance': balance.strip() if balance else "",
-                        'account_type': account_type.strip() if account_type else "",
-                        'row_index': i
-                    })
+                    'account_id': account_id.strip() if account_id else "",
+                    'balance': balance.strip() if balance else "",
+                    'available_amount': available_amount.strip() if available_amount else "",
+                    'account_type': "",
+                    'row_index': i
+                })
                 except Exception as e:
                     log.warning(f"Failed to extract account from row {i}: {e}")
                     continue
-            
+
             log.info(f"Retrieved {len(accounts)} accounts")
             return accounts
             
@@ -101,10 +106,10 @@ class AccountsOverviewPage(BasePage):
         return None
 
     def get_account_count(self) -> int:
-        """Get total number of accounts."""
         try:
-            rows = self.find_elements(self.ACCOUNT_ROWS)
-            return len(rows)
+            self.page.locator(self.ACCOUNT_ROWS).first.wait_for(state="visible", timeout=10000)
+            # Only count rows that have an account link, excluding the total row
+            return self.page.locator("#accountTable tbody tr td:nth-child(1) a").count()
         except:
             return 0
 
@@ -193,22 +198,6 @@ class AccountsOverviewPage(BasePage):
         except:
             return ""
 
-    def search_accounts_by_type(self, account_type: str) -> List[Dict[str, str]]:
-        """
-        Search accounts by account type.
-        
-        Args:
-            account_type: Account type to filter by (e.g., 'Checking', 'Savings')
-            
-        Returns:
-            List of matching accounts
-        """
-        all_accounts = self.get_all_accounts()
-        return [
-            account for account in all_accounts 
-            if account_type.lower() in account['account_type'].lower()
-        ]
-
     def get_accounts_with_minimum_balance(self, min_balance: float) -> List[Dict[str, str]]:
         """
         Get accounts with balance above minimum threshold.
@@ -245,6 +234,7 @@ class AccountsOverviewPage(BasePage):
             'all_accounts_have_ids': True,
             'all_accounts_have_balances': True,
             'all_accounts_have_types': True,
+            'all_accounts_have_available_amounts': True,
             'balance_format_valid': True,
             'total_balance_calculable': True,
             'duplicate_accounts': False,
@@ -265,9 +255,9 @@ class AccountsOverviewPage(BasePage):
                     validation_results['all_accounts_have_balances'] = False
                     validation_results['issues_found'].append("Account missing balance")
                 
-                if not account['account_type']:
-                    validation_results['all_accounts_have_types'] = False
-                    validation_results['issues_found'].append("Account missing type")
+                if not account['available_amount']:
+                    validation_results['all_accounts_have_available_amounts'] = False
+                    validation_results['issues_found'].append("Account missing available amount")
                 
                 # Check balance format
                 if account['balance']:

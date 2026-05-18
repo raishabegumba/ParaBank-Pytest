@@ -18,8 +18,9 @@ class TestDataUtils:
         """Get test user credentials."""
         # Default test users
         test_users = {
-            "raisha": {"username": "raisha", "password": "Password@1234"},
-            "admin": {"username": "admin", "password": "admin"}
+        "raisha": {"username": "john", "password": "demo"},
+        "admin": {"username": "admin", "password": "admin"},
+        "john": {"username": "john", "password": "demo"},
         }
         return test_users.get(username, {"username": "testuser", "password": "testpass"})
     

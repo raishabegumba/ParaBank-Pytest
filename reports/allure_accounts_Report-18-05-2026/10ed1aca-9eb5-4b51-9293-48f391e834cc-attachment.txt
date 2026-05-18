@@ -1,0 +1,3 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mcreate_screenshots_directory[0m:[36m55[0m - [1mScreenshots directory ready: reports\screenshots[0m
+[31m[1mERROR   [0m | [36msrc.fixtures.browser_fixtures[0m:[36mbrowser_instance[0m:[36m31[0m - [31m[1mFailed to initialize browser: It looks like you are using Playwright Sync API inside the asyncio loop.
+Please use the Async API instead.[0m

@@ -1,0 +1,31 @@
+[1mINFO    [0m | [36msrc.utils.webdriver_utils[0m:[36mget_browser_context[0m:[36m41[0m - [1mBrowser context created with viewport 1920x1080[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m212[0m - [1mStarting test: test_total_balance_calculation[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mgoto[0m:[36m22[0m - [1mNavigated to http://localhost:8080/parabank[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement .login input[name='username'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement .login input[name='password'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mnavigate_to_login[0m:[36m48[0m - [1mSuccessfully navigated to login page[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='username'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_username[0m:[36m101[0m - [1mEntered username: john[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[name='password'] found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36menter_password[0m:[36m119[0m - [1mEntered password[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement .login input[type='submit'][value='Log In'] found with strategy clickable[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mclick[0m:[36m55[0m - [1mClicked element: .login input[type='submit'][value='Log In'][0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mclick_login[0m:[36m132[0m - [1mClicked login button[0m
+[1mINFO    [0m | [36msrc.pages.login_page[0m:[36mlogin[0m:[36m219[0m - [1mLogin attempted for user: john[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mis_visible[0m:[36m102[0m - [1mElement is visible: #leftPanel p b[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mget_text[0m:[36m87[0m - [1mRetrieved text 'Welcome' from element: #leftPanel p b[0m
+[1mINFO    [0m | [36msrc.pages.base_page[0m:[36mgoto[0m:[36m22[0m - [1mNavigated to http://localhost:8080/parabank/overview.htm[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement #accountTable found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.accounts_overview_page[0m:[36mnavigate_to_accounts_overview[0m:[36m43[0m - [1mSuccessfully navigated to accounts overview page[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement #accountTable is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement #leftPanel p b is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement a[href*='openaccount.htm'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement a[href*='transfer.htm'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement a[href*='billpay.htm'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement a[href*='findtrans.htm'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.utils.assertion_helpers[0m:[36massert_element_visible[0m:[36m26[0m - [1mElement a[href*='logout.htm'] is visible as expected[0m
+[1mINFO    [0m | [36msrc.pages.accounts_overview_page[0m:[36massert_accounts_overview_loaded[0m:[36m311[0m - [1mAccounts overview page loaded successfully[0m
+[33m[1mWARNING [0m | [36msrc.pages.base_page[0m:[36mis_visible[0m:[36m108[0m - [33m[1mElement is not visible: #accountTable tfoot tr td:nth-child(2)[0m
+[1mINFO    [0m | [36msrc.utils.wait_helpers[0m:[36mwait_for_element[0m:[36m71[0m - [1mElement #accountTable found with strategy visible[0m
+[1mINFO    [0m | [36msrc.pages.accounts_overview_page[0m:[36mget_all_accounts[0m:[36m70[0m - [1mRetrieved 12 accounts[0m
+[1mINFO    [0m | [36mtests.ui.conftest[0m:[36mtest_setup_teardown[0m:[36m228[0m - [1mCompleted test: test_total_balance_calculation[0m

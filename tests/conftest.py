@@ -1,6 +1,9 @@
 """Pytest configuration and fixtures for UI tests."""
 import pytest
 from datetime import datetime
+# from src.fixtures.browser_fixtures import *
+# from src.fixtures.reporting_fixtures import *
+
 from src.utils.webdriver_utils import (
     get_browser,
     get_browser_context,
@@ -8,6 +11,10 @@ from src.utils.webdriver_utils import (
 )
 from src.config.settings import settings
 
+pytest_plugins = [
+    "src.fixtures.browser_fixtures",
+    "src.fixtures.reporting_fixtures",
+]
 
 @pytest.fixture(scope="session")
 def browser():
@@ -40,6 +47,24 @@ def pytest_runtest_makereport(item, call):
     """Make test report with failure info."""
     if call.excinfo is not None:
         item.rep_call = item
+
+
+@pytest.fixture(scope="session", autouse=True)
+def initialize_parabank_db():
+    """Reset ParaBank database before test session."""
+    import requests
+    try:
+        response = requests.post(
+            f"{settings.base_url}/services/bank/initializeDB",
+            timeout=10
+        )
+        if response.status_code == 200:
+            print("ParaBank DB initialized successfully")
+        else:
+            print(f"DB init returned status: {response.status_code}")
+    except Exception as e:
+        print(f"DB init failed (continuing anyway): {e}")
+    yield
 
 
 @pytest.fixture(scope="session", autouse=True)

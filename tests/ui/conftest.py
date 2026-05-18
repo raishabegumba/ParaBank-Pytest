@@ -14,6 +14,7 @@ from src.pages.loan_request_page import LoanRequestPage
 from src.pages.find_transactions_page import FindTransactionsPage
 from src.utils.test_data_utils import TestDataUtils
 from src.config.logger import log
+import re
 
 
 @pytest.fixture(scope="session")
@@ -414,7 +415,7 @@ def _write_test_report_json(request, page: Page):
         },
     }
 
-    safe_name = test_name.replace('/', '_').replace(':', '_')
+    safe_name = re.sub(r'[<>:"/\\|?*\'\[\]]', '_', test_name)
     out_path = report_dir / f"test_report_{safe_name}.json"
     out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
 
