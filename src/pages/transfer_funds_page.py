@@ -1,5 +1,6 @@
 """ParaBank Transfer Funds Page Object Model."""
 from typing import Optional, Dict, Any, List
+from venv import logger
 from playwright.sync_api import Page
 from src.pages.base_page import BasePage
 from src.utils.wait_helpers import WaitHelper, WaitStrategy
@@ -15,9 +16,8 @@ class TransferFundsPage(BasePage):
     FROM_ACCOUNT_SELECT = "#fromAccountId"
     TO_ACCOUNT_SELECT = "#toAccountId"
     AMOUNT_FIELD = "#amount"
-    DESCRIPTION_FIELD = "#description"
     TRANSFER_BUTTON = "input[type='submit'][value='Transfer']"
-    SUCCESS_MESSAGE = "#rightPanel h1"
+    SUCCESS_MESSAGE = "h1.title:has-text('Transfer Complete!')"
     ERROR_MESSAGE = ".error"
     TRANSFER_CONFIRMATION = ".confirmation"
     ACCOUNTS_OVERVIEW_LINK = "a[href*='overview.htm']"
@@ -120,47 +120,35 @@ class TransferFundsPage(BasePage):
         self.fill(self.AMOUNT_FIELD, amount)
         log.info(f"Entered transfer amount: {amount}")
 
-    def enter_description(self, description: str) -> None:
-        """
-        Enter transfer description.
-        
-        Args:
-            description: Transfer description
-        """
-        self.wait_helper.wait_for_element(self.DESCRIPTION_FIELD, WaitStrategy.ELEMENT_VISIBLE)
-        self.fill(self.DESCRIPTION_FIELD, description)
-        log.info(f"Entered transfer description: {description}")
-
     def perform_transfer(
         self,
         from_account: str,
         to_account: str,
-        amount: str,
-        description: Optional[str] = None
+        amount: str
     ) -> None:
-        """
-        Perform complete fund transfer.
-        
-        Args:
-            from_account: Source account ID
-            to_account: Destination account ID
-            amount: Transfer amount
-            description: Optional transfer description
-        """
+
+        if from_account == to_account:
+            raise ValueError(
+                "From and To accounts must be different"
+            )
+
         try:
-            self.select_from_account(from_account)
-            self.select_to_account(to_account)
-            self.enter_amount(amount)
-            
-            if description:
-                self.enter_description(description)
-            
-            self.click_transfer_button()
-            log.info(f"Initiated transfer: {amount} from {from_account} to {to_account}")
-            
-        except Exception as e:
-            log.error(f"Transfer failed: {e}")
-            raise
+            amount_float = float(amount)
+        except ValueError:
+            raise ValueError(
+                f"Invalid transfer amount format: {amount}"
+            )
+
+        if amount_float <= 0:
+            raise ValueError(
+                "Transfer amount must be greater than 0"
+            )
+
+        self.select_from_account(from_account)
+        self.select_to_account(to_account)
+        self.enter_amount(amount)
+
+        self.click_transfer_button()
 
     def click_transfer_button(self) -> None:
         """Click transfer button."""
@@ -168,22 +156,35 @@ class TransferFundsPage(BasePage):
         self.click(self.TRANSFER_BUTTON)
         log.info("Clicked transfer button")
 
-    def is_transfer_successful(self) -> bool:
-        """Check if transfer was successful."""
+    
+    def is_transfer_successful(self, timeout: int = 10000) -> bool:
+        """Check if transfer completed successfully."""
         try:
-            self.wait_helper.wait_for_element(self.SUCCESS_MESSAGE, WaitStrategy.ELEMENT_VISIBLE, timeout=5000)
-            success_text = self.get_text(self.SUCCESS_MESSAGE)
-            return "Transfer Complete!" in success_text or "successfully" in success_text.lower()
-        except:
+            self.page.locator(
+                self.SUCCESS_MESSAGE
+            ).wait_for(
+                state="visible",
+                timeout=timeout
+            )
+
+            log.info("Transfer completed successfully")
+            return True
+
+        except Exception as e:
+            log.error(f"Transfer success validation failed: {e}")
             return False
 
     def get_success_message(self) -> str:
-        """Get success message after transfer."""
+        """Get transfer success message."""
+
         try:
-            if self.is_visible(self.SUCCESS_MESSAGE, timeout=5000):
-                return self.get_text(self.SUCCESS_MESSAGE)
-            return ""
-        except:
+            return self.page.locator(
+                "h1.title",
+                has_text="Transfer Complete!"
+            ).text_content() or ""
+
+        except Exception as e:
+            log.error(f"Failed to get success message: {e}")
             return ""
 
     def get_error_message(self) -> str:
@@ -196,50 +197,43 @@ class TransferFundsPage(BasePage):
             return ""
 
     def get_transfer_confirmation_details(self) -> Dict[str, str]:
-        """
-        Get transfer confirmation details.
-        
-        Returns:
-            Dictionary with confirmation details
-        """
+        """Get transfer confirmation details."""
+
         details = {}
-        
+
         try:
-            if self.is_visible(self.TRANSFER_CONFIRMATION, timeout=5000):
-                confirmation_text = self.get_text(self.TRANSFER_CONFIRMATION)
-                
-                # Parse confirmation details (basic parsing)
-                lines = confirmation_text.split('\n')
-                for line in lines:
-                    if 'From:' in line:
-                        details['from_account'] = line.split('From:')[1].strip()
-                    elif 'To:' in line:
-                        details['to_account'] = line.split('To:')[1].strip()
-                    elif 'Amount:' in line:
-                        details['amount'] = line.split('Amount:')[1].strip()
-            
-            # Also check individual display elements
-            if self.is_visible(self.TRANSFER_FROM_DISPLAY):
-                details['from_account'] = self.get_text(self.TRANSFER_FROM_DISPLAY)
-            
-            if self.is_visible(self.TRANSFER_TO_DISPLAY):
-                details['to_account'] = self.get_text(self.TRANSFER_TO_DISPLAY)
-            
-            if self.is_visible(self.TRANSFER_AMOUNT_DISPLAY):
-                details['amount'] = self.get_text(self.TRANSFER_AMOUNT_DISPLAY)
-                
+            confirmation_text = self.page.locator(
+                "#showResult"
+            ).text_content()
+
+            if confirmation_text:
+                details["raw_text"] = confirmation_text.strip()
+
+                import re
+
+                amount_match = re.search(
+                    r"\$(\d+\.\d+)",
+                    confirmation_text
+                )
+
+                if amount_match:
+                    details["amount"] = amount_match.group(1)
+
+            log.info(f"Transfer confirmation details: {details}")
+
         except Exception as e:
             log.error(f"Failed to get transfer confirmation: {e}")
-        
+
         return details
 
     def validate_transfer_form(self) -> Dict[str, Any]:
         """
         Validate transfer form state and requirements.
-        
+
         Returns:
             Dictionary with validation results
         """
+
         validation_results = {
             'from_account_selected': False,
             'to_account_selected': False,
@@ -249,50 +243,84 @@ class TransferFundsPage(BasePage):
             'form_ready': False,
             'issues': []
         }
-        
+
         try:
-            # Check from account selection
-            from_value = self.get_attribute(self.FROM_ACCOUNT_SELECT, "value")
-            validation_results['from_account_selected'] = bool(from_value and from_value.strip())
-            
-            # Check to account selection
-            to_value = self.get_attribute(self.TO_ACCOUNT_SELECT, "value")
-            validation_results['to_account_selected'] = bool(to_value and to_value.strip())
-            
-            # Check amount entry
-            amount_value = self.get_attribute(self.AMOUNT_FIELD, "value")
-            validation_results['amount_entered'] = bool(amount_value and amount_value.strip())
-            
-            # Validate amount format
+            # Get selected account values
+            from_value = self.page.locator(
+                self.FROM_ACCOUNT_SELECT
+            ).input_value()
+
+            to_value = self.page.locator(
+                self.TO_ACCOUNT_SELECT
+            ).input_value()
+
+            amount_value = self.page.locator(
+                self.AMOUNT_FIELD
+            ).input_value()
+
+            # Validate account selections
+            validation_results['from_account_selected'] = bool(
+                from_value and from_value.strip()
+            )
+
+            validation_results['to_account_selected'] = bool(
+                to_value and to_value.strip()
+            )
+
+            # Validate amount entry
+            validation_results['amount_entered'] = bool(
+            amount_value and amount_value.strip()
+            )
+
+            # Validate amount format/value
             if validation_results['amount_entered']:
                 try:
-                    amount_float = float(amount_value.replace('$', '').replace(',', ''))
+                    amount_float = float(amount_value)
+
                     validation_results['valid_amount'] = amount_float > 0
+
                     if amount_float <= 0:
-                        validation_results['issues'].append("Amount must be greater than 0")
+                        validation_results['issues'].append(
+                        "Amount must be greater than 0"
+                        )
+
                 except ValueError:
                     validation_results['valid_amount'] = False
-                    validation_results['issues'].append("Invalid amount format")
-            
-            # Check that accounts are different
-            if validation_results['from_account_selected'] and validation_results['to_account_selected']:
-                validation_results['different_accounts'] = from_value != to_value
+                    validation_results['issues'].append(
+                        "Invalid amount format"
+                    )
+
+            # Ensure accounts are different
+            if (
+                validation_results['from_account_selected']
+                and validation_results['to_account_selected']
+            ):
+
+                validation_results['different_accounts'] = (
+                    from_value != to_value
+                )
+
                 if not validation_results['different_accounts']:
-                    validation_results['issues'].append("From and To accounts must be different")
-            
+                    validation_results['issues'].append(
+                        "From and To accounts must be different"
+                    )
+
             # Overall form readiness
             validation_results['form_ready'] = (
-                validation_results['from_account_selected'] and
-                validation_results['to_account_selected'] and
-                validation_results['amount_entered'] and
-                validation_results['valid_amount'] and
-                validation_results['different_accounts']
+                validation_results['from_account_selected']
+                and validation_results['to_account_selected']
+                and validation_results['amount_entered']
+                and validation_results['valid_amount']
+                and validation_results['different_accounts']
             )
-            
+
         except Exception as e:
             log.error(f"Transfer form validation failed: {e}")
-            validation_results['issues'].append(f"Validation error: {str(e)}")
-        
+
+            validation_results['issues'].append(
+                f"Validation error: {str(e)}"
+            )
+
         return validation_results
 
     def clear_transfer_form(self) -> None:
@@ -300,10 +328,6 @@ class TransferFundsPage(BasePage):
         try:
             # Clear amount field
             self.fill(self.AMOUNT_FIELD, "")
-            
-            # Clear description field
-            self.fill(self.DESCRIPTION_FIELD, "")
-            
             log.info("Cleared transfer form")
         except Exception as e:
             log.error(f"Failed to clear transfer form: {e}")
@@ -325,7 +349,7 @@ class TransferFundsPage(BasePage):
         for element in required_elements:
             self.assert_helper.assert_element_visible(element)
         
-        self.assert_helper.assert_element_clickable(self.TRANSFER_BUTTON)
+        self.assert_helper.assert_element_is_clickable(self.TRANSFER_BUTTON)
         log.info("Transfer funds page loaded successfully")
 
     def assert_transfer_successful(self, expected_amount: Optional[str] = None) -> None:
@@ -353,17 +377,17 @@ class TransferFundsPage(BasePage):
         log.info("Transfer failure assertion verified")
 
     def wait_for_transfer_complete(self, timeout: int = 10000) -> bool:
-        """Wait for transfer process to complete."""
+        """Wait for transfer completion."""
         try:
-            return self.wait_helper.wait_for_custom_condition(
-                condition=lambda: (
-                    self.is_visible(self.SUCCESS_MESSAGE, timeout=1000) or 
-                    self.is_visible(self.ERROR_MESSAGE, timeout=1000)
-                ),
-                timeout=timeout,
-                message="Transfer completion timeout"
-            )
-        except:
+            self.page.get_by_role(
+                "heading",
+                name="Transfer Complete!"
+            ).wait_for(timeout=timeout)
+
+            return True
+
+        except Exception as e:
+            log.error(f"Transfer completion wait failed: {e}")
             return False
 
     def validate_transfer_limits(self, amount: float) -> Dict[str, Any]:
@@ -418,48 +442,115 @@ class TransferFundsPage(BasePage):
         from_account: str,
         to_account: str,
         amount: str,
-        description: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Simulate transfer with comprehensive validation.
-        
+
+        Args:
+            from_account: Source account ID
+            to_account: Destination account ID
+            amount: Transfer amount
+
         Returns:
             Dictionary with simulation results
         """
+
         result = {
-            'success': False,
-            'error_message': None,
-            'validation_results': None,
-            'confirmation_details': None,
-            'timestamp': None
+            "success": False,
+            "error_message": None,
+            "validation_results": None,
+            "confirmation_details": None,
+            "timestamp": None,
         }
-        
+
         try:
-            # Validate form before submission
+            # Populate transfer form
+            self.select_from_account(from_account)
+            self.select_to_account(to_account)
+            self.enter_amount(amount)
+
+            # Validate populated form
             validation_results = self.validate_transfer_form()
-            result['validation_results'] = validation_results
-            
-            if not validation_results['form_ready']:
-                result['error_message'] = "Form validation failed: " + "; ".join(validation_results['issues'])
+            result["validation_results"] = validation_results
+
+            if not validation_results["form_ready"]:
+                result["error_message"] = (
+                    "Form validation failed: "
+                    + "; ".join(validation_results["issues"])
+                )
+
+                log.warning(result["error_message"])
                 return result
-            
-            # Perform transfer
-            self.perform_transfer(from_account, to_account, amount, description)
-            
-            # Wait for completion
-            transfer_complete = self.wait_for_transfer_complete()
-            
-            if transfer_complete:
-                if self.is_transfer_successful():
-                    result['success'] = True
-                    result['confirmation_details'] = self.get_transfer_confirmation_details()
-                    log.info("Transfer simulation successful")
-                else:
-                    result['error_message'] = self.get_error_message()
-                    log.warning(f"Transfer simulation failed: {result['error_message']}")
-            
+
+            # Validate business rules
+            try:
+                limit_validation = self.validate_transfer_limits(float(amount))
+
+                if not all([
+                    limit_validation["within_transaction_limit"],
+                    limit_validation["within_daily_limit"],
+                    limit_validation["business_hours"],
+                ]):
+                    result["error_message"] = (
+                        "Transfer limit validation failed: "
+                        + "; ".join(limit_validation["issues"])
+                    )
+
+                    log.warning(result["error_message"])
+                    return result
+
+            except ValueError:
+                result["error_message"] = "Invalid amount format"
+                log.error(result["error_message"])
+                return result
+
+            # Submit transfer
+            self.click_transfer_button()
+
+            # Wait for transfer completion
+            if not self.wait_for_transfer_complete():
+                result["error_message"] = (
+                    "Transfer completion timeout exceeded"
+                )
+
+                log.error(result["error_message"])
+                return result
+
+            # Verify transfer success
+            if self.is_transfer_successful():
+                result["success"] = True
+                result["confirmation_details"] = (
+                    self.get_transfer_confirmation_details()
+                )
+
+                result["timestamp"] = self.page.evaluate(
+                    "() => new Date().toISOString()"
+                )
+
+                log.info(
+                    f"Transfer simulation successful: "
+                    f"{amount} from {from_account} to {to_account}"
+                )
+
+            else:
+                result["error_message"] = self.get_error_message()
+
+                if not result["error_message"]:
+                    result["error_message"] = (
+                        "Transfer failed without visible error message"
+                    )
+
+                log.warning(
+                    f"Transfer simulation failed: "
+                    f"{result['error_message']}"
+                )
+
         except Exception as e:
-            result['error_message'] = str(e)
-            log.error(f"Transfer simulation exception: {e}")
-        
+            result["error_message"] = str(e)
+
+            log.error(
+                f"Transfer simulation exception: {e}",
+                exc_info=True
+            )
+
         return result

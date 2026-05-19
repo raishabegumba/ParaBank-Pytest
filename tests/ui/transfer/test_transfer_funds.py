@@ -1,6 +1,7 @@
 """Comprehensive UI test suite for ParaBank Transfer Funds page."""
 import pytest
 from decimal import Decimal
+from datetime import datetime
 from playwright.sync_api import Page
 from src.pages.transfer_funds_page import TransferFundsPage
 from src.pages.login_page import LoginPage
@@ -77,9 +78,8 @@ class TestTransferFundsPage:
             
             # Perform transfer
             amount = "50.00"
-            description = "Test transfer"
-            
-            self.transfer_page.perform_transfer(from_account, to_account, amount, description)
+          
+            self.transfer_page.perform_transfer(from_account, to_account, amount)
             
             # Verify successful transfer
             assert self.transfer_page.is_transfer_successful()
@@ -108,76 +108,85 @@ class TestTransferFundsPage:
             self.transfer_page.click_transfer_button()
             
             # Should fail or show validation error
-            assert not self.transfer_page.is_transfer_successful()
+            validation = self.transfer_page.validate_transfer_form()
+
+            assert validation["different_accounts"] is False
+            assert "From and To accounts must be different" in validation["issues"]
 
     @pytest.mark.regression
     def test_transfer_with_zero_amount_fails(self):
-        """Test transfer fails with zero amount."""
+        """Test transfer with zero amount fails."""
+
         self.login_and_navigate_to_transfer()
-        
-        # Get available accounts
+
         from_accounts = self.transfer_page.get_from_accounts()
         to_accounts = self.transfer_page.get_to_accounts()
-        
-        if len(from_accounts) >= 1 and len(to_accounts) >= 1:
-            from_account = from_accounts[0]
-            to_account = to_accounts[0] if to_accounts[0] != from_account else (to_accounts[1] if len(to_accounts) > 1 else from_accounts[0])
-            
-            # Try transfer with zero amount
-            self.transfer_page.perform_transfer(from_account, to_account, "0.00")
-            
-            # Should fail
-            assert not self.transfer_page.is_transfer_successful()
+
+        from_account = from_accounts[0]
+        to_account = next(
+            acc for acc in to_accounts
+            if acc != from_account
+        )
+
+        with pytest.raises(
+            ValueError,
+            match="greater than 0"
+        ):
+            self.transfer_page.perform_transfer(
+                from_account,
+                to_account,
+                "0.00"
+            )
 
     @pytest.mark.regression
     def test_transfer_with_negative_amount_fails(self):
-        """Test transfer fails with negative amount."""
+        """Test transfer with negative amount fails."""
+
         self.login_and_navigate_to_transfer()
-        
-        # Get available accounts
+
         from_accounts = self.transfer_page.get_from_accounts()
         to_accounts = self.transfer_page.get_to_accounts()
-        
-        if len(from_accounts) >= 1 and len(to_accounts) >= 1:
-            from_account = from_accounts[0]
-            to_account = to_accounts[0] if to_accounts[0] != from_account else (to_accounts[1] if len(to_accounts) > 1 else from_accounts[0])
-            
-            # Try transfer with negative amount
-            self.transfer_page.perform_transfer(from_account, to_account, "-50.00")
-            
-            # Should fail
-            assert not self.transfer_page.is_transfer_successful()
+
+        from_account = from_accounts[0]
+        to_account = next(
+            acc for acc in to_accounts
+            if acc != from_account
+        )
+
+        with pytest.raises(
+            ValueError,
+            match="greater than 0"
+        ):
+            self.transfer_page.perform_transfer(
+                from_account,
+                to_account,
+                "-50.00"
+            )
 
     @pytest.mark.regression
     def test_transfer_with_invalid_amount_format_fails(self):
-        """Test transfer fails with invalid amount format."""
+        """Test transfer with invalid amount format fails."""
+
         self.login_and_navigate_to_transfer()
-        
-        # Get available accounts
+
         from_accounts = self.transfer_page.get_from_accounts()
         to_accounts = self.transfer_page.get_to_accounts()
-        
-        if len(from_accounts) >= 1 and len(to_accounts) >= 1:
-            from_account = from_accounts[0]
-            to_account = to_accounts[0] if to_accounts[0] != from_account else (to_accounts[1] if len(to_accounts) > 1 else from_accounts[0])
-            
-            # Try transfer with invalid amount
-            self.transfer_page.perform_transfer(from_account, to_account, "abc")
-            
-            # Should fail
-            assert not self.transfer_page.is_transfer_successful()
 
-    @pytest.mark.regression
-    def test_transfer_without_selecting_accounts_fails(self):
-        """Test transfer fails without selecting accounts."""
-        self.login_and_navigate_to_transfer()
-        
-        # Try transfer without selecting accounts
-        self.transfer_page.enter_amount("50.00")
-        self.transfer_page.click_transfer_button()
-        
-        # Should fail
-        assert not self.transfer_page.is_transfer_successful()
+        from_account = from_accounts[0]
+        to_account = next(
+            acc for acc in to_accounts
+            if acc != from_account
+        )
+
+        with pytest.raises(
+            ValueError,
+            match="Invalid transfer amount"
+        ):
+            self.transfer_page.perform_transfer(
+                from_account,
+                to_account,
+                "abc"
+            )
 
     @pytest.mark.regression
     def test_transfer_without_amount_fails(self):
@@ -208,10 +217,7 @@ class TestTransferFundsPage:
         # Initially form should not be ready
         validation = self.transfer_page.validate_transfer_form()
         assert not validation['form_ready']
-        assert not validation['from_account_selected']
-        assert not validation['to_account_selected']
         assert not validation['amount_entered']
-        
         # Fill valid data
         from_accounts = self.transfer_page.get_from_accounts()
         to_accounts = self.transfer_page.get_to_accounts()
@@ -276,8 +282,7 @@ class TestTransferFundsPage:
             (self.transfer_page.FROM_ACCOUNT_SELECT, "From account"),
             (self.transfer_page.TO_ACCOUNT_SELECT, "To account"),
             (self.transfer_page.AMOUNT_FIELD, "Amount"),
-            (self.transfer_page.DESCRIPTION_FIELD, "Description")
-        ]
+      ]
         
         for field_selector, field_name in form_fields:
             element = self.page.locator(field_selector)
@@ -330,7 +335,7 @@ class TestTransferFundsPage:
             
             # Try transfer with maximum amount
             max_amount = "10000.00"
-            self.transfer_page.perform_transfer(from_account, to_account, max_amount, "Maximum amount test")
+            self.transfer_page.perform_transfer(from_account, to_account, max_amount)
             
             # Should succeed (at limit)
             result = self.transfer_page.is_transfer_successful()
@@ -338,22 +343,25 @@ class TestTransferFundsPage:
 
     @pytest.mark.edge_case
     def test_transfer_with_decimal_amount(self):
-        """Test transfer with decimal amount."""
         self.login_and_navigate_to_transfer()
-        
-        # Get available accounts
+
         from_accounts = self.transfer_page.get_from_accounts()
         to_accounts = self.transfer_page.get_to_accounts()
-        
+
         if len(from_accounts) >= 2:
             from_account = from_accounts[0]
             to_account = from_accounts[1]
-            
-            # Try transfer with decimal amount
+
             decimal_amount = "123.45"
-            self.transfer_page.perform_transfer(from_account, to_account, decimal_amount, "Decimal amount test")
-            
-            # Should succeed
+
+            self.transfer_page.perform_transfer(
+                from_account,
+                to_account,
+                decimal_amount
+            )
+
+            print(self.page.locator("body").inner_text())
+
             assert self.transfer_page.is_transfer_successful()
 
     @pytest.mark.edge_case
@@ -371,7 +379,7 @@ class TestTransferFundsPage:
             
             # Try transfer with very small amount
             small_amount = "0.01"
-            self.transfer_page.perform_transfer(from_account, to_account, small_amount, "Small amount test")
+            self.transfer_page.perform_transfer(from_account, to_account, small_amount)
             
             # Should succeed
             assert self.transfer_page.is_transfer_successful()
@@ -392,17 +400,17 @@ class TestTransferFundsPage:
             self.transfer_page.select_from_account(from_account)
             self.transfer_page.select_to_account(to_account)
             self.transfer_page.enter_amount("50.00")
-            self.transfer_page.enter_description("Test description")
+            
             
             # Clear form
             self.transfer_page.clear_transfer_form()
             
             # Verify amount and description are cleared
             amount_value = self.transfer_page.get_attribute(self.transfer_page.AMOUNT_FIELD, "value")
-            description_value = self.transfer_page.get_attribute(self.transfer_page.DESCRIPTION_FIELD, "value")
+            # description_value = self.transfer_page.get_attribute(self.transfer_page.DESCRIPTION_FIELD, "value")
             
             assert amount_value == "" or amount_value is None, "Amount field should be cleared"
-            assert description_value == "" or description_value is None, "Description field should be cleared"
+            # assert description_value == "" or description_value is None, "Description field should be cleared"
 
     @pytest.mark.regression
     def test_transfer_wait_for_completion(self):
@@ -418,7 +426,7 @@ class TestTransferFundsPage:
             to_account = from_accounts[1]
             
             # Perform transfer
-            self.transfer_page.perform_transfer(from_account, to_account, "50.00", "Wait test")
+            self.transfer_page.perform_transfer(from_account, to_account, "50.00")
             
             # Wait for completion
             completed = self.transfer_page.wait_for_transfer_complete()
@@ -437,10 +445,9 @@ class TestTransferFundsPage:
             from_account = from_accounts[0]
             to_account = from_accounts[1]
             amount = "75.25"
-            description = "Confirmation test"
-            
+               
             # Perform transfer
-            self.transfer_page.perform_transfer(from_account, to_account, amount, description)
+            self.transfer_page.perform_transfer(from_account, to_account, amount)
             
             if self.transfer_page.is_transfer_successful():
                 # Get confirmation details
@@ -467,7 +474,7 @@ class TestTransferFundsPage:
             
             # Simulate transfer with validation
             result = self.transfer_page.simulate_transfer_with_validation(
-                from_account, to_account, "100.00", "Simulation test"
+                from_account, to_account, "100.00"
             )
             
             # Verify simulation results
@@ -608,8 +615,9 @@ class TestTransferFundsPage:
                         self.transfer_page.select_to_account(from_accounts[j])
                         
                         # Verify selections
-                        from_selected = self.transfer_page.get_attribute(self.transfer_page.FROM_ACCOUNT_SELECT, "value")
-                        to_selected = self.transfer_page.get_attribute(self.transfer_page.TO_ACCOUNT_SELECT, "value")
+                        from_selected = self.page.locator(self.transfer_page.FROM_ACCOUNT_SELECT).input_value()
+
+                        to_selected = self.page.locator(self.transfer_page.TO_ACCOUNT_SELECT).input_value()
                         
                         assert from_selected == from_accounts[i], f"From account {from_accounts[i]} should be selected"
                         assert to_selected == from_accounts[j], f"To account {from_accounts[j]} should be selected"

@@ -1,7 +1,9 @@
 """Comprehensive Pytest configuration and fixtures for UI tests."""
+from logging import config
+
 import pytest
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from playwright.sync_api import Page, Browser, BrowserContext
 from src.pages.base_page import BasePage
 from src.pages.login_page import LoginPage
@@ -15,6 +17,7 @@ from src.pages.find_transactions_page import FindTransactionsPage
 from src.utils.test_data_utils import TestDataUtils
 from src.config.logger import log
 import re
+
 
 
 @pytest.fixture(scope="session")
@@ -166,7 +169,11 @@ def authenticated_user(page: Page, login_page: LoginPage, test_data: TestDataUti
         test_user["password"]
     )
     
-    assert login_result['success'], "Failed to authenticate test user"
+    if not login_result['success']:
+        raise AssertionError(
+            f"Failed to authenticate test user '{test_user['username']}'. "
+            "Ensure ParaBank demo user 'john/demo' exists or DB has been initialized."
+        )
     
     yield page
     
@@ -198,8 +205,8 @@ def test_scenarios():
         'invalid_transfer_amounts': ['0.00', '-50.00', 'xyz', ''],
         'valid_dates': [
             datetime.now().strftime('%m/%d/%Y'),
-            (datetime.now() - datetime.timedelta(days=30)).strftime('%m/%d/%Y'),
-            (datetime.now() + datetime.timedelta(days=7)).strftime('%m/%d/%Y'),
+            (datetime.now() - timedelta(days=30)).strftime('%m/%d/%Y'),
+            (datetime.now() + timedelta(days=7)).strftime('%m/%d/%Y'),
         ],
         'invalid_dates': ['13/32/2023', '02/30/2023', 'invalid-date', ''],
     }
@@ -218,7 +225,8 @@ def test_setup_teardown(request, page: Page, test_environment):
     if getattr(rep_call, "failed", False) and test_environment['screenshot_on_failure']:
 
         try:
-            screenshot_path = f"screenshots/{test_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+            safe_test_name = re.sub(r'[<>:"/\\|?*\'\[\]]', '_', test_name)
+            screenshot_path = f"screenshots/{safe_test_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
             os.makedirs('screenshots', exist_ok=True)
             page.screenshot(path=screenshot_path, full_page=True)
             log.info(f"Screenshot saved: {screenshot_path}")
@@ -487,7 +495,24 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "data_analysis: mark test as data analysis test"
     )
-
+    config.addinivalue_line(
+    "markers", "positive: mark test as positive scenario test"
+    )
+    config.addinivalue_line(
+    "markers", "negative: mark test as negative scenario test"
+    )
+    config.addinivalue_line(
+    "markers", "parallel: mark test as parallel execution test"
+    )
+    config.addinivalue_line(
+    "markers", "mobile: mark test as mobile viewport test"
+    )
+    config.addinivalue_line(
+    "markers", "boundary: mark test as boundary value test"
+    )
+    config.addinivalue_line(
+    "markers", "data_integrity: mark test as data integrity test"
+    )
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection to add markers automatically."""
