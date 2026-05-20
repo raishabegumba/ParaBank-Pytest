@@ -123,7 +123,7 @@ def transaction_test_data() -> Dict[str, Any]:
             'Utility bill payment',
             'Restaurant dinner'
         ],
-        'transaction_types': ['DEBIT', 'CREDIT', 'ALL'],
+
         'invalid_amounts': ['-50', '0', 'abc', '1.23.45'],
         'large_amounts': ['10000', '50000', '100000'],
         'date_ranges': {

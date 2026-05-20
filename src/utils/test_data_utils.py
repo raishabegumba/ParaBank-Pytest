@@ -21,7 +21,7 @@ class TestDataUtils:
         "raisha": {"username": "john", "password": "demo"},
         "admin": {"username": "admin", "password": "admin"},
         "john": {"username": "john", "password": "demo"},
-        }
+    }
         return test_users.get(username, {"username": "testuser", "password": "testpass"})
     
     def load_test_data(self, filename: str) -> dict:

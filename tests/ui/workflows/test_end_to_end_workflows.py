@@ -202,7 +202,6 @@ class TestEndToEndWorkflows:
         if len(accounts) > 0:
             find_trans_page.search_transactions(
                 account_id=accounts[0],
-                transaction_type="ALL",
                 from_date="12/01/2024",
                 to_date="12/31/2024"
             )

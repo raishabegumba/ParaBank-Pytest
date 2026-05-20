@@ -3,6 +3,7 @@ import pytest
 from src.pages.registration_page import RegistrationPage
 from src.utils.registration_helpers import RegistrationHelpers
 from test_data.registration_data import get_valid_user
+import uuid
 
 
 @pytest.mark.edge_case
@@ -35,7 +36,7 @@ class TestRegistrationEdge:
             "abc",
             "a" * 20
         ]
-    )
+       )
     def test_boundary_usernames(self, page, username):
         """Test valid boundary usernames."""
         reg = RegistrationPage(page)
