@@ -39,12 +39,31 @@ class LoginPage(BasePage):
         # Load base URL from settings so .env overrides work
         self._base_url = settings.base_url
 
-    @retry_with_backoff(max_attempts=3, base_delay=0.5)
+    # @retry_with_backoff(max_attempts=3, base_delay=0.5)
+    # def navigate_to_login(self) -> None:
+    #     """Navigate to login page with retry mechanism."""
+    #     self.goto(self._base_url)
+    #     self.assert_helper.assert_element_visible(self.USERNAME_FIELD)
+    #     self.assert_helper.assert_element_visible(self.PASSWORD_FIELD)
+    #     log.info("Successfully navigated to login page")
+
+    """@retry_with_backoff(max_attempts=3, base_delay=0.5)"""
+
     def navigate_to_login(self) -> None:
-        """Navigate to login page with retry mechanism."""
+        """Navigate to login page with stable sync strategy."""
+
         self.goto(self._base_url)
+
+        # Wait for DOM, not networkidle
+        self.page.wait_for_load_state("domcontentloaded")
+
+        # Wait for actual element instead of sleep
+        self.page.wait_for_selector(self.USERNAME_FIELD, state="visible", timeout=10000)
+        self.page.wait_for_selector(self.PASSWORD_FIELD, state="visible", timeout=10000)
+
         self.assert_helper.assert_element_visible(self.USERNAME_FIELD)
         self.assert_helper.assert_element_visible(self.PASSWORD_FIELD)
+
         log.info("Successfully navigated to login page")
 
     # def enter_username(self, username: str, clear_first: bool = True) -> None:

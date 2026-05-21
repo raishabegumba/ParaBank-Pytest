@@ -13,6 +13,7 @@ class AssertionHelper:
         """Initialize assertion helper."""
         self.page = page
     
+    
     def assert_element_visible(
         self,
         selector: str,

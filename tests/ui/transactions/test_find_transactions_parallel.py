@@ -211,24 +211,25 @@ class TestFindTransactionsParallel:
     # =========================================================================
 
     def test_parallel_account_search(self):
-        """Verify account-based search in parallel execution."""
+        """Verify account search works in parallel."""
 
         self.login_and_navigate()
 
-        accounts = self.find_transactions_page.get_available_accounts()
-        assert len(accounts) > 0
-
-        data = TransactionDataBuilder.build_amount_search(accounts)
-
-        self.find_transactions_page.search_transactions(**data)
-
-        self.find_transactions_page.wait_for_search_results()
-
-        assert (
-            self.find_transactions_page.has_transactions()
-            or "no transactions" in self.find_transactions_page.get_no_results_message().lower()
+        accounts = (
+            self.find_transactions_page
+            .get_available_accounts()
         )
 
+        assert len(accounts) > 0
+
+        self.find_transactions_page.search_transactions(
+            account_id=accounts[0]
+        )
+
+        assert (
+            self.find_transactions_page
+            .wait_for_search_results()
+        )
     # =========================================================================
     # PARALLEL TEST 2 - RESULTS LOADING
     # =========================================================================
