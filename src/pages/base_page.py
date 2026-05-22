@@ -191,6 +191,31 @@ class BasePage:
             self.log.error(f"Failed to get attribute from element: {selector}. Error: {e}")
             raise
 
+    def get_input_value(self, selector: str) -> str:
+        """
+        Get current live value from input/select/textarea elements.
+
+        Uses Playwright input_value() instead of HTML attribute lookup,
+        which is more reliable for form validation and assertions.
+        """
+        try:
+            locator = self.page.locator(selector)
+
+            value = locator.input_value()
+
+            self.log.info(
+                f"Retrieved input value '{value}' from element: {selector}"
+            )
+
+            return value
+
+        except Exception as e:
+            self.log.error(
+                f"Failed to get input value from element: "
+                f"{selector}. Error: {e}"
+            )
+            raise
+
     def check(self, selector: str):
         """Check checkbox or radio button."""
         try:

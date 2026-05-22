@@ -1,41 +1,30 @@
 """Enterprise-grade test data fixtures for comprehensive testing."""
+
 import pytest
 import json
 import random
-from typing import Generator, Dict, Any, List
+from typing import Dict, Any
 from faker import Faker
 from pathlib import Path
 from src.config.settings import get_settings
 from src.config.logger import log
 
 
-# Provide `fake_data` as a fixture (some tests depend on this exact name).
+# ----------------------------
+# Faker setup
+# ----------------------------
+_faker = Faker()
+
+
 @pytest.fixture(scope="session")
 def fake_data() -> Faker:
     """Faker instance for generating test data."""
     return Faker()
 
 
-
-
-@pytest.fixture(scope="session")
-def user_test_data(fake_data: Faker) -> Dict[str, Any]:
-
-    """
-    User test data fixture.
-
-    Note: Some tests import `user_test_data` as a plain variable rather than using pytest injection.
-    To prevent `TypeError: 'function' object is not subscriptable`, we also expose a module-level
-    dict named `user_test_data_data` and keep this fixture returning that dict.
-    """
-    return user_test_data_data
-
-
-# Module-level dict for tests that import `user_test_data` directly.
-# Use a local Faker instance here — the `fake_data` name above is a pytest
-# fixture function at module scope and cannot be called like Faker().
-_faker = Faker()
-
+# ----------------------------
+# USER TEST DATA
+# ----------------------------
 user_test_data_data: Dict[str, Any] = {
     'valid_user': {
         'username': 'john.doe',
@@ -64,7 +53,8 @@ user_test_data_data: Dict[str, Any] = {
     'random_users': [
         {
             'username': _faker.user_name(),
-            'password': _faker.password(length=12, special_chars=True, digits=True, upper_case=True, lower_case=True),
+            'password': _faker.password(length=12, special_chars=True, digits=True,
+                                         upper_case=True, lower_case=True),
             'first_name': _faker.first_name(),
             'last_name': _faker.last_name(),
             'address': _faker.street_address(),
@@ -79,15 +69,16 @@ user_test_data_data: Dict[str, Any] = {
 }
 
 
+@pytest.fixture(scope="session")
+def user_test_data(fake_data: Faker) -> Dict[str, Any]:
+    return user_test_data_data
 
+
+# ----------------------------
+# ACCOUNT TEST DATA
+# ----------------------------
 @pytest.fixture(scope="session")
 def account_test_data() -> Dict[str, Any]:
-    """
-    Account test data fixture.
-    
-    Returns:
-        Dictionary with account test data
-    """
     return {
         'checking_account': {
             'type': 'CHECKING',
@@ -105,14 +96,11 @@ def account_test_data() -> Dict[str, Any]:
     }
 
 
+# ----------------------------
+# TRANSACTION TEST DATA
+# ----------------------------
 @pytest.fixture(scope="session")
 def transaction_test_data() -> Dict[str, Any]:
-    """
-    Transaction test data fixture.
-    
-    Returns:
-        Dictionary with transaction test data
-    """
     return {
         'transfer_amounts': ['10', '50', '100', '500', '1000'],
         'bill_pay_amounts': ['25', '50', '100', '250', '500'],
@@ -123,7 +111,6 @@ def transaction_test_data() -> Dict[str, Any]:
             'Utility bill payment',
             'Restaurant dinner'
         ],
-
         'invalid_amounts': ['-50', '0', 'abc', '1.23.45'],
         'large_amounts': ['10000', '50000', '100000'],
         'date_ranges': {
@@ -135,14 +122,11 @@ def transaction_test_data() -> Dict[str, Any]:
     }
 
 
+# ----------------------------
+# LOAN TEST DATA
+# ----------------------------
 @pytest.fixture(scope="session")
 def loan_test_data() -> Dict[str, Any]:
-    """
-    Loan test data fixture.
-    
-    Returns:
-        Dictionary with loan test data
-    """
     return {
         'small_loan': {
             'amount': '5000',
@@ -160,27 +144,21 @@ def loan_test_data() -> Dict[str, Any]:
             'description': 'Large personal loan'
         },
         'invalid_loans': [
-            {'amount': '500', 'down_payment': '50'},  # Too small
-            {'amount': '-1000', 'down_payment': '100'},  # Negative
-            {'amount': 'abc', 'down_payment': '100'},  # Invalid format
-            {'amount': '10000', 'down_payment': '15000'},  # Down payment > loan
+            {'amount': '500', 'down_payment': '50'},
+            {'amount': '-1000', 'down_payment': '100'},
+            {'amount': 'abc', 'down_payment': '100'},
+            {'amount': '10000', 'down_payment': '15000'},
         ],
         'down_payment_percentages': [5, 10, 20, 30, 50],
         'loan_amounts': ['1000', '5000', '10000', '25000', '50000', '100000']
     }
 
 
+# ----------------------------
+# PAYEE TEST DATA
+# ----------------------------
 @pytest.fixture(scope="session")
 def payee_test_data(fake_data: Faker) -> Dict[str, Any]:
-    """
-    Payee test data fixture.
-    
-    Args:
-        fake_data: Faker instance
-        
-    Returns:
-        Dictionary with payee test data
-    """
     return {
         'utility_payee': {
             'name': 'Electric Company',
@@ -189,7 +167,8 @@ def payee_test_data(fake_data: Faker) -> Dict[str, Any]:
             'state': 'EC',
             'zip_code': '12345',
             'phone': '555-POWER-1',
-            'account_number': 'ELEC-12345'
+            'account_number': 'ELEC-12345',
+            'verify_account': 'ELEC-12345'
         },
         'insurance_payee': {
             'name': 'Health Insurance Co',
@@ -198,7 +177,8 @@ def payee_test_data(fake_data: Faker) -> Dict[str, Any]:
             'state': 'CT',
             'zip_code': '67890',
             'phone': '555-HEALTH-1',
-            'account_number': 'HLTH-67890'
+            'account_number': 'HLTH-67890',
+            'verify_account': 'ELEC-12345'
         },
         'random_payees': [
             {
@@ -215,12 +195,9 @@ def payee_test_data(fake_data: Faker) -> Dict[str, Any]:
     }
 
 
-# NOTE:
-# Some tests import `security_test_data` and `boundary_test_data` as plain data
-# (not as pytest fixtures) and then subscript them, e.g. security_test_data['xss_payloads'].
-# To support both usage patterns, we provide these as module-level data dicts,
-# not as fixtures.
-
+# ----------------------------
+# SECURITY TEST DATA
+# ----------------------------
 security_test_data: Dict[str, Any] = {
     'xss_payloads': [
         '<script>alert("XSS")</script>',
@@ -237,21 +214,12 @@ security_test_data: Dict[str, Any] = {
         "admin'--"
     ],
     'invalid_usernames': [
-        'admin',
-        'administrator',
-        'root',
-        'test',
-        'guest',
+        'admin', 'administrator', 'root', 'test', 'guest',
         '<script>alert("XSS")</script>',
         "' OR '1'='1"
     ],
     'weak_passwords': [
-        'password',
-        '123456',
-        'admin',
-        'qwerty',
-        'letmein',
-        'password123'
+        'password', '123456', 'admin', 'qwerty', 'letmein', 'password123'
     ],
     'brute_force_attempts': [
         'user1', 'user2', 'user3', 'test1', 'test2',
@@ -262,25 +230,20 @@ security_test_data: Dict[str, Any] = {
 
 @pytest.fixture(scope="session")
 def security_test_data_fixture() -> Dict[str, Any]:
-    """Pytest fixture wrapper for compatibility with fixture-based tests."""
     return security_test_data
 
 
+# ----------------------------
+# PERFORMANCE TEST DATA
+# ----------------------------
 @pytest.fixture(scope="session")
 def performance_test_data() -> Dict[str, Any]:
-
-    """
-    Performance test data fixture.
-    
-    Returns:
-        Dictionary with performance test data
-    """
     return {
         'thresholds': {
-            'page_load': 3.0,      # seconds
-            'api_response': 1.0,    # seconds
-            'form_submission': 2.0,  # seconds
-            'search_results': 1.5    # seconds
+            'page_load': 3.0,
+            'api_response': 1.0,
+            'form_submission': 2.0,
+            'search_results': 1.5
         },
         'load_patterns': {
             'light': {'users': 1, 'duration': 60},
@@ -297,20 +260,57 @@ def performance_test_data() -> Dict[str, Any]:
     }
 
 
+# ----------------------------
+# BOUNDARY TEST DATA (FIXED)
+# ----------------------------
+boundary_test_data: Dict[str, Any] = {
+    'amount_boundaries': {
+        'minimum': '0.01',
+        'maximum': '5000.00',
+        'invalid_minimum': '0',
+        'invalid_maximum': '5000.01',
+        'invalid_amounts': ['0', '-1', 'abc', '1000000.00', ''],
+        'decimal_limits': ['0.1', '0.01', '0.001', '999999.999']
+    },
+    'text_boundaries': {
+        'min_length': 1,
+        'max_length': 255,
+        'empty': '',
+        'max_length_plus_one': 'a' * 256,
+        'special_chars': '!@#$%^&*()_+-=[]{}|;:,.<>?',
+        'unicode': '测试🚀🌟'
+    },
+    'date_boundaries': {
+        'min_date': '01/01/1900',
+        'max_date': '12/31/2099',
+        'invalid_dates': ['13/01/2024', '02/30/2024', '00/00/0000', 'abc']
+    }
+}
+
+
+# ----------------------------
+# BILL PAY TEST DATA
+# ----------------------------
+@pytest.fixture(scope="session")
+def bill_pay_test_data() -> Dict[str, Any]:
+    return {
+        'valid_amounts': ['1.00', '25.50', '100.00', '999.99', '5000.00'],
+        'invalid_amounts': ['', '0', '-1', 'abc', '5000.01'],
+        'special_characters': ['!@#$', '<script>', '" OR 1=1 --'],
+        'long_description': 'A' * 256,
+        'unicode_values': ['测试', '🚀', 'Δοκιμή']
+    }
+
+
+# ----------------------------
+# ENV HELPERS (UNCHANGED STRUCTURE)
+# ----------------------------
 @pytest.fixture(scope="function")
 def dynamic_test_data(fake_data: Faker) -> Dict[str, Any]:
-    """
-    Dynamic test data fixture for each test function.
-    
-    Args:
-        fake_data: Faker instance
-        
-    Returns:
-        Dictionary with dynamic test data
-    """
     return {
         'username': fake_data.user_name(),
-        'password': fake_data.password(length=12, special_chars=True, digits=True, upper_case=True, lower_case=True),
+        'password': fake_data.password(length=12, special_chars=True, digits=True,
+                                       upper_case=True, lower_case=True),
         'first_name': fake_data.first_name(),
         'last_name': fake_data.last_name(),
         'email': fake_data.email(),
@@ -328,22 +328,14 @@ def dynamic_test_data(fake_data: Faker) -> Dict[str, Any]:
 
 @pytest.fixture(scope="session")
 def test_data_manager():
-    """
-    Test data manager fixture for managing test data lifecycle.
-    
-    Returns:
-        TestDataManager instance
-    """
     class TestDataManager:
         def __init__(self):
-            self.generated_data = {}
             self.used_data = set()
             self.settings = get_settings()
             self.data_dir = Path(self.settings.test_data_dir)
             self.data_dir.mkdir(exist_ok=True)
-        
+
         def generate_unique_username(self, base_name: str = "testuser") -> str:
-            """Generate unique username."""
             counter = 1
             while True:
                 username = f"{base_name}{counter}"
@@ -351,46 +343,33 @@ def test_data_manager():
                     self.used_data.add(username)
                     return username
                 counter += 1
-        
+
         def save_test_data(self, data: Dict[str, Any], filename: str) -> None:
-            """Save test data to file."""
             filepath = self.data_dir / f"{filename}.json"
             with open(filepath, 'w') as f:
                 json.dump(data, f, indent=2)
-            log.info(f"Test data saved to {filepath}")
-        
+            log.info(f"Saved test data: {filepath}")
+
         def load_test_data(self, filename: str) -> Dict[str, Any]:
-            """Load test data from file."""
             filepath = self.data_dir / f"{filename}.json"
             if filepath.exists():
                 with open(filepath, 'r') as f:
                     return json.load(f)
             return {}
-        
+
         def cleanup_test_data(self) -> None:
-            """Clean up generated test data."""
             if self.settings.cleanup_test_data:
-                # Clean up temporary files
                 for file in self.data_dir.glob("temp_*.json"):
                     file.unlink()
-                log.info("Test data cleanup completed")
-    
+                log.info("Cleanup completed")
+
     return TestDataManager()
 
 
 @pytest.fixture(scope="function")
 def environment_test_data(get_settings) -> Dict[str, Any]:
-    """
-    Environment-specific test data fixture.
-    
-    Args:
-        get_settings: Settings getter
-        
-    Returns:
-        Dictionary with environment-specific data
-    """
     settings = get_settings()
-    
+
     base_data = {
         'base_url': settings.base_url,
         'test_username': settings.test_username,
@@ -398,54 +377,12 @@ def environment_test_data(get_settings) -> Dict[str, Any]:
         'browser': settings.browser.value,
         'headless': settings.headless
     }
-    
-    # Environment-specific overrides
+
     if settings.test_env.value == 'dev':
-        base_data.update({
-            'timeout_multiplier': 2.0,
-            'retry_attempts': 3,
-            'debug_mode': True
-        })
+        base_data.update({'timeout_multiplier': 2.0, 'retry_attempts': 3, 'debug_mode': True})
     elif settings.test_env.value == 'staging':
-        base_data.update({
-            'timeout_multiplier': 1.5,
-            'retry_attempts': 2,
-            'debug_mode': False
-        })
+        base_data.update({'timeout_multiplier': 1.5, 'retry_attempts': 2, 'debug_mode': False})
     elif settings.test_env.value == 'prod':
-        base_data.update({
-            'timeout_multiplier': 1.0,
-            'retry_attempts': 1,
-            'debug_mode': False
-        })
-    
+        base_data.update({'timeout_multiplier': 1.0, 'retry_attempts': 1, 'debug_mode': False})
+
     return base_data
-
-
-
-
-boundary_test_data: Dict[str, Any] = {
-    'amount_boundaries': {
-        'minimum': '0.01',
-        'maximum': '999999.99',
-        # Backwards-compatible keys expected by existing tests
-        'invalid_minimum': '0',
-        'invalid_maximum': '1000000.00',
-        'invalid_amounts': ['0', '-1', 'abc', '1000000.00', ''],
-        'decimal_limits': ['0.1', '0.01', '0.001', '999999.999']
-    },
-
-        'text_boundaries': {
-            'min_length': 1,
-            'max_length': 255,
-            'empty': '',
-            'max_length_plus_one': 'a' * 256,
-            'special_chars': '!@#$%^&*()_+-=[]{}|;:,.<>?',
-            'unicode': '测试🚀🌟'
-        },
-        'date_boundaries': {
-            'min_date': '01/01/1900',
-            'max_date': '12/31/2099',
-            'invalid_dates': ['13/01/2024', '02/30/2024', '00/00/0000', 'abc']
-        }
-    }
