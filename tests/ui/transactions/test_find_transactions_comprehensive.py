@@ -9,6 +9,9 @@ from src.pages.login_page import LoginPage
 from src.config.logger import log
 
 
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.find_transactions
 class TestFindTransactionsComprehensive:
 
     @pytest.fixture(autouse=True)

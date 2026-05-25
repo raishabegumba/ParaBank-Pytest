@@ -126,22 +126,19 @@ class TestBillPayParallel:
 
         assert len(accounts) > 0
 
-        dropdown = self.page.locator(
-            self.bill_pay_page.FROM_ACCOUNT_SELECT
-        )
-
         for account in accounts[:3]:
 
             self.bill_pay_page.select_from_account(
                 account
             )
 
-            selected_text = dropdown.locator(
-                "option:checked"
-            ).text_content()
+            selected = (
+                self.bill_pay_page.get_input_value(
+                    self.bill_pay_page
+                    .FROM_ACCOUNT_SELECT)
+            )
 
-            assert selected_text is not None
-            assert selected_text.strip() == account
+            assert selected == account
 
     def test_parallel_successful_payment_flow(self):
         """Verify stable payment flow."""
