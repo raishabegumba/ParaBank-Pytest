@@ -57,11 +57,11 @@ class BasePage:
             self.log.error(f"Failed to click element: {selector}. Error: {e}")
             raise
 
-    def fill(self, selector: str, text: str):
-        """Fill text in input field."""
+    def fill(self, selector: str, text):
+        """Fill text in input field (casts non-string values to str)."""
         try:
             locator = self.page.locator(selector)
-            locator.fill(text)
+            locator.fill(str(text))
             self.log.info(f"Filled text '{text}' in element: {selector}")
         except Exception as e:
             self.log.error(f"Failed to fill text in element: {selector}. Error: {e}")

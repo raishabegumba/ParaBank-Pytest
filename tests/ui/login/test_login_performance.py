@@ -16,7 +16,7 @@ class TestLoginPerformance:
         self.test_data = TestDataUtils()
 
     def test_login_response_time(self):
-        user = self.test_data.get_test_user("raisha")
+        user = self.test_data.get_test_user("john")
 
         self.login_page.navigate_to_login()
 

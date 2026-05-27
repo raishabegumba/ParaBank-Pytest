@@ -100,8 +100,8 @@ class Settings(BaseSettings):
     cleanup_test_data: bool = Field(default=True, description="Cleanup test data after tests")
 
     # Test Credentials (with validation)
-    test_username: str = Field(default="testuser", description="Test username")
-    test_password: str = Field(default="testpass", description="Test password")
+    test_username: str = Field(default="john", description="Test username")
+    test_password: str = Field(default="demo", description="Test password")
     admin_username: str = Field(default="admin", description="Admin username")
     admin_password: str = Field(default="admin", description="Admin password")
     

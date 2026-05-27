@@ -115,28 +115,52 @@ class BillPayPage(BasePage):
 
     def fill_payee_information(
         self,
-        name: str,
-        address: str,
-        city: str,
-        state: str,
-        zip_code: str,
-        phone: str,
-        account_number: str,
+        name: Optional[str] = None,
+        address: Optional[str] = None,
+        city: Optional[str] = None,
+        state: Optional[str] = None,
+        zip_code: Optional[str] = None,
+        phone: Optional[str] = None,
+        account_number: Optional[str] = None,
         verify_account_number: Optional[str] = None,
+        **kwargs,
     ) -> None:
-        """Fill all payee information fields."""
+        """Fill all payee information fields.
+
+        Accepts either the newer parameter names (`name`, `address`, `zip_code`, etc.)
+        or legacy/test-suite keys like `payee_name`, `payee_address`, `payee_zip`.
+        """
         try:
+            # Support legacy/test fixture keys if provided via kwargs
+            name = name or kwargs.get("payee_name") or kwargs.get("name")
+            address = address or kwargs.get("payee_address") or kwargs.get("address")
+            city = city or kwargs.get("payee_city") or kwargs.get("city")
+            state = state or kwargs.get("payee_state") or kwargs.get("state")
+            zip_code = zip_code or kwargs.get("payee_zip") or kwargs.get("zip_code")
+            phone = phone or kwargs.get("payee_phone") or kwargs.get("phone")
+            account_number = (
+                account_number or kwargs.get("payee_account") or kwargs.get("account_number") or ""
+            )
+
             self.wait_helper.wait_for_element(
                 self.PAYEE_NAME_FIELD, WaitStrategy.ELEMENT_VISIBLE
             )
 
-            self.fill(self.PAYEE_NAME_FIELD, name)
-            self.fill(self.PAYEE_ADDRESS_FIELD, address)
-            self.fill(self.PAYEE_CITY_FIELD, city)
-            self.fill(self.PAYEE_STATE_FIELD, state)
-            self.fill(self.PAYEE_ZIP_FIELD, zip_code)
-            self.fill(self.PAYEE_PHONE_FIELD, phone)
-            self.fill(self.PAYEE_ACCOUNT_FIELD, account_number)
+            # Fill fields only when values are provided (avoid None)
+            if name is not None:
+                self.fill(self.PAYEE_NAME_FIELD, name)
+            if address is not None:
+                self.fill(self.PAYEE_ADDRESS_FIELD, address)
+            if city is not None:
+                self.fill(self.PAYEE_CITY_FIELD, city)
+            if state is not None:
+                self.fill(self.PAYEE_STATE_FIELD, state)
+            if zip_code is not None:
+                self.fill(self.PAYEE_ZIP_FIELD, zip_code)
+            if phone is not None:
+                self.fill(self.PAYEE_PHONE_FIELD, phone)
+            if account_number is not None:
+                self.fill(self.PAYEE_ACCOUNT_FIELD, account_number)
 
             # Fill verify-account field when present
             verify_value = verify_account_number or account_number

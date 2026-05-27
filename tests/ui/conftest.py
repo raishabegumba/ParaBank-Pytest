@@ -160,7 +160,7 @@ def test_data():
 def authenticated_user(page: Page, login_page: LoginPage, test_data: TestDataUtils):
     """Provide authenticated user session for tests."""
     # Get test user credentials
-    test_user = test_data.get_test_user("raisha")
+    test_user = test_data.get_test_user("john")
     
     # Perform login
     login_page.navigate_to_login()
